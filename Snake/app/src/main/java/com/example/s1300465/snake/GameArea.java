@@ -8,19 +8,22 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class GameArea extends View {
-    private int TARGET_PIXEL_SIZE = 50;
+    private int TARGET_PIXEL_SIZE = 30;
     private float PIXEL_WIDTH;
     private float PIXEL_HEIGHT;
-    private GridTile grid[][];
+    private GridPiece grid[][];
     private int gridWidth, gridHeight;
     private final Paint paint = new Paint();
 
     private Direction dir;
     private int length;
     private int snakeX, snakeY;
+
+    private ArrayList<SnakePiece> snakePieces = new ArrayList<>();
 
     public GameArea(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -34,11 +37,15 @@ public class GameArea extends View {
             for(int y = 0; y < gridHeight; y++){
                 paint.setColor(Color.TRANSPARENT);
 
-                if(grid[x][y] == GridTile.SnakeHead){
+                if(grid[x][y] == null){
+                    continue;
+                }
+
+                if(grid[x][y].getType() == GridTile.SnakeHead){
                     paint.setColor(Color.WHITE);
-                }else if(grid[x][y] == GridTile.SnakePiece){
+                }else if(grid[x][y].getType() == GridTile.SnakePiece){
                     paint.setColor(Color.WHITE);
-                }else if(grid[x][y] == GridTile.Pickup){
+                }else if(grid[x][y].getType() == GridTile.Pickup){
                     paint.setColor(Color.GREEN);
                 }
 
@@ -55,28 +62,116 @@ public class GameArea extends View {
         this.dir = dir;
         this.length = length;
 
-        grid[x][y] = GridTile.SnakeHead;
+        SnakePiece piece = new SnakePiece(GridTile.SnakeHead, Direction.LEFT);
+        grid[x][y] = piece;
+        snakePieces.add(piece);
 
         for(int i = 1; i <= length; i++){
+            SnakePiece newPiece = new SnakePiece(GridTile.SnakePiece, dir);
             switch(dir){
                 case UP:
-                    grid[x][y + i] = GridTile.SnakePiece;
+                    grid[x][y + i] = newPiece;
                     break;
                 case LEFT:
-                    grid[x + i][y] = GridTile.SnakePiece;
+                    grid[x + i][y] = newPiece;
                     break;
                 case RIGHT:
-                    grid[x - i][y] = GridTile.SnakePiece;
+                    grid[x - i][y] = newPiece;
                     break;
                 case DOWN:
-                    grid[x][y - i] = GridTile.SnakePiece;
+                    grid[x][y - i] = newPiece;
                     break;
+            }
+
+            snakePieces.add(newPiece);
+        }
+    }
+
+    protected void moveSnake(){
+        Direction dirOfLastPiece = null;
+        GridPiece[][] tempGrid = new GridPiece[gridWidth][gridHeight];
+
+        for(SnakePiece piece : snakePieces){
+            int[] coords = findPieceLocation(piece);
+            int x = coords[0];
+            int y = coords[1];
+
+            if(piece.getType() == GridTile.SnakeHead){
+                dirOfLastPiece = piece.getDirection();
+                tempGrid = moveSnakePiece(x, y, tempGrid);
+            }
+
+            if(piece.getType() == GridTile.SnakePiece){
+                tempGrid = moveSnakePiece(x, y, tempGrid);
+
+                Direction temp = ((SnakePiece) grid[x][y]).getDirection();
+                piece.setDirection(dirOfLastPiece);
+                dirOfLastPiece = temp;
+            }
+
+        }
+
+        grid = tempGrid;
+    }
+
+    protected GridPiece[][] moveSnakePiece(int x, int y, GridPiece[][] mGrid){
+        SnakePiece piece = (SnakePiece) grid[x][y];
+        GridPiece[][] tempGrid = mGrid;
+
+        switch(piece.getDirection()){
+            case UP:
+                tempGrid[x][y - 1] = piece;
+                break;
+            case LEFT:
+                tempGrid[x - 1][y] = piece;
+                break;
+            case RIGHT:
+                tempGrid[x + 1][y] = piece;
+                break;
+            case DOWN:
+                tempGrid[x][y + 1] = piece;
+                break;
+        }
+
+        return tempGrid;
+    }
+
+    protected int[] findPieceLocation(SnakePiece piece){
+        int[] coords = new int[2];
+        for(int x = 0; x < gridWidth; x++){
+            for(int y = 0; y < gridHeight; y++){
+                if(grid[x][y] == null){
+                    continue;
+                }
+
+                if(grid[x][y] == piece){
+                    coords[0] = x;
+                    coords[1] = y;
+                    break;
+                }
+            }
+        }
+
+        return coords;
+    }
+
+    protected void changeSnakeDirection(Direction dir){
+        for(int x = 0; x < gridWidth; x++){
+            for(int y = 0; y < gridHeight; y++){
+                if(grid[x][y] == null){
+                    continue;
+                }
+
+                if(grid[x][y].getType() == GridTile.SnakeHead){
+                    ((SnakePiece) grid[x][y]).setDirection(dir);
+                    break;
+                }
             }
         }
     }
 
     protected void clearSnake(){
-        grid = new GridTile[gridWidth][gridHeight];
+        grid = new GridPiece[gridWidth][gridHeight];
     }
 
     protected int getGridWidth(){
@@ -104,7 +199,7 @@ public class GameArea extends View {
         PIXEL_WIDTH = TARGET_PIXEL_SIZE + xRemainder/gridWidth;
         PIXEL_HEIGHT = TARGET_PIXEL_SIZE +  yRemainder/gridHeight;
 
-        grid = new GridTile[gridWidth][gridHeight];
+        grid = new GridPiece[gridWidth][gridHeight];
     }
 
     protected void redraw(){
@@ -131,10 +226,10 @@ public class GameArea extends View {
                 break;
         }
 
-        clearSnake();
-        spawnSnake(snakeX, snakeY, dir, length);
+        moveSnake();
     }
 }
+
 
 enum GridTile{
     SnakeHead,
