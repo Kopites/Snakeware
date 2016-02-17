@@ -12,10 +12,13 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.Random;
+
 public class GameScreen extends Activity {
     GameArea gameArea;
     boolean gameRunning = false;
     Direction direction = Direction.UP;
+    private int score = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,11 @@ public class GameScreen extends Activity {
     protected void doGameLoop(){
         try {
             gameArea.redraw();
+
+            if(new Random().nextInt(10) == 0 && gameArea.numFruit() == 0){
+                gameArea.spawnFruit();
+            }
+
         }catch(IndexOutOfBoundsException ex){
             Log.w("Died", "You died!");
             gameRunning = false;

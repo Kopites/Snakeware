@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class GameArea extends View {
@@ -90,6 +91,7 @@ public class GameArea extends View {
     protected void moveSnake(){
         Direction dirOfLastPiece = null;
         GridPiece[][] tempGrid = new GridPiece[gridWidth][gridHeight];
+        tempGrid = copyFruitsToNewGrid(tempGrid);
 
         for(SnakePiece piece : snakePieces){
             int[] coords = findPieceLocation(piece);
@@ -112,6 +114,21 @@ public class GameArea extends View {
         }
 
         grid = tempGrid;
+    }
+
+    protected GridPiece[][] copyFruitsToNewGrid(GridPiece[][] mGrid){
+        for(int x = 0; x < gridWidth; x++){
+            for(int y = 0; y < gridHeight; y++){
+                if(grid[x][y] == null){
+                    continue;
+                }
+
+                if(grid[x][y].getType() == GridTile.Pickup){
+                    mGrid[x][y] = grid[x][y];
+                }
+            }
+        }
+        return mGrid;
     }
 
     protected GridPiece[][] moveSnakePiece(int x, int y, GridPiece[][] mGrid){
@@ -170,8 +187,35 @@ public class GameArea extends View {
         }
     }
 
-    protected void clearSnake(){
-        grid = new GridPiece[gridWidth][gridHeight];
+    protected void spawnFruit(){
+        Random random = new Random();
+        int fruitX;
+        int fruitY;
+
+        do{
+            fruitX = random.nextInt(gridWidth);
+            fruitY = random.nextInt(gridHeight);
+        }while(grid[fruitX][fruitY] != null);
+
+        grid[fruitX][fruitY] = new GridPiece(GridTile.Pickup);
+    }
+
+    protected int numFruit(){
+        int count = 0;
+
+        for(int x = 0; x < gridWidth; x++){
+            for(int y = 0; y < gridHeight; y++){
+                if(grid[x][y] == null){
+                    continue;
+                }
+
+                if(grid[x][y].getType() == GridTile.Pickup){
+                    count++;
+                }
+            }
+        }
+
+        return count;
     }
 
     protected int getGridWidth(){
