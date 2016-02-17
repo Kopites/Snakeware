@@ -48,7 +48,7 @@ public class GameScreen extends Activity {
 
         int spawnX = Math.round(gameArea.getGridWidth()/2);
         int spawnY = Math.round(gameArea.getGridHeight()/2);
-        gameArea.spawnSnake(spawnX, spawnY, direction, 6);
+        gameArea.spawnSnake(spawnX, spawnY, direction, 3);
     }
 
     protected void initGameLoop(){
