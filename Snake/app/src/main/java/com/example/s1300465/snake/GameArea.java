@@ -11,7 +11,9 @@ import android.view.View;
 import java.util.Random;
 
 public class GameArea extends View {
-    private int PIXEL_SIZE = 50;
+    private int TARGET_PIXEL_SIZE = 50;
+    private float PIXEL_WIDTH = 50;
+    private float PIXEL_HEIGHT = 50;
     private GridTile grid[][];
     private int gridWidth, gridHeight;
     private final Paint paint = new Paint();
@@ -27,9 +29,9 @@ public class GameArea extends View {
             for(int j = 0; j < gridHeight; j++){
                 Random rnd = new Random();
                 paint.setColor(Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)));
-                int pixelLeft = PIXEL_SIZE * i;
-                int pixelTop = PIXEL_SIZE * j;
-                canvas.drawRect(pixelLeft, pixelTop, pixelLeft + PIXEL_SIZE, pixelTop + PIXEL_SIZE, paint);
+                float pixelLeft = PIXEL_WIDTH * i;
+                float pixelTop = PIXEL_HEIGHT * j;
+                canvas.drawRect(pixelLeft, pixelTop, pixelLeft + PIXEL_WIDTH, pixelTop + PIXEL_HEIGHT, paint);
             }
         }
     }
@@ -38,8 +40,23 @@ public class GameArea extends View {
     protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight){
         Log.d("Size", "Size just changed to w" + width + ", h" + height);
 
-        gridWidth = (int) Math.floor(width/PIXEL_SIZE);
-        gridHeight = (int) Math.floor(height/PIXEL_SIZE);
+        calculateGridSize(width, height);
+    }
+
+    protected void calculateGridSize(int width, int height){
+        gridWidth = (int) Math.floor(width/TARGET_PIXEL_SIZE);
+        gridHeight = (int) Math.floor(height/TARGET_PIXEL_SIZE);
+
+        //Calculate how much extra white space didn't fit into the 50x50 pixel grid
+        float xRemainder = width - (gridWidth*TARGET_PIXEL_SIZE);
+        float yRemainder = height - (gridHeight*TARGET_PIXEL_SIZE);
+        //Then divide it up and increase the pixel sizes to fit the screen perfectly
+        PIXEL_WIDTH = TARGET_PIXEL_SIZE + xRemainder/gridWidth;
+        PIXEL_HEIGHT = TARGET_PIXEL_SIZE +  yRemainder/gridHeight;
+        Log.d("Pixel Width", PIXEL_WIDTH + "");
+        Log.d("Pixel Height", PIXEL_HEIGHT + "");
+        Log.d("Horizontal Pixels", gridWidth + "");
+        Log.d("Vertical Pixels", gridHeight + "");
 
         grid = new GridTile[gridWidth][gridHeight];
     }
