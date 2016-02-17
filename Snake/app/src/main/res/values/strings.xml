@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Snake</string>
     <string name="title_activity_game_screen">GameScreen</string>
+    <string name="score">Score: %1$s</string>
 </resources>

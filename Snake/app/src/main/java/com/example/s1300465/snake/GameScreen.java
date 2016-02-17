@@ -1,6 +1,7 @@
 package com.example.s1300465.snake;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.gesture.Gesture;
 import android.graphics.Path;
 import android.os.Handler;
@@ -11,11 +12,13 @@ import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.Random;
 
 public class GameScreen extends Activity {
     GameArea gameArea;
+    TextView txtScore;
     boolean gameRunning = false;
     Direction direction = Direction.UP;
     private int score = 0;
@@ -26,6 +29,9 @@ public class GameScreen extends Activity {
         setContentView(R.layout.activity_game_screen);
 
         gameArea = (GameArea) findViewById(R.id.gameArea);
+        txtScore = (TextView) findViewById(R.id.txtScore);
+
+        updateScoreLabel();
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -38,6 +44,8 @@ public class GameScreen extends Activity {
     protected void initNewGame(){
         initGameLoop();
 
+        updateScoreLabel();
+
         final GestureDetector gestureDetector = new GestureDetector(this, new SwipeDetector(this));
 
         gameArea.setOnTouchListener(new View.OnTouchListener() {
@@ -47,7 +55,6 @@ public class GameScreen extends Activity {
                 return true;
             }
         });
-
 
         int spawnX = Math.round(gameArea.getGridWidth()/2);
         int spawnY = Math.round(gameArea.getGridHeight()/2);
@@ -81,10 +88,27 @@ public class GameScreen extends Activity {
                 gameArea.spawnFruit();
             }
 
+            if(gameArea.ateFruit()){
+                score++;
+                gameArea.increaseSnakeLength(1);
+                updateScoreLabel();
+            }
+
         }catch(IndexOutOfBoundsException ex){
             Log.w("Died", "You died!");
             gameRunning = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    initNewGame();
+                }
+            }, 1000);
         }
+    }
+
+    protected void updateScoreLabel(){
+        Resources res = getResources();
+        txtScore.setText(res.getString(R.string.score, score));
     }
 
     protected void changeSnakeDirection(Direction dir){
@@ -107,5 +131,18 @@ enum Direction{
     UP,
     DOWN,
     LEFT,
-    RIGHT
+    RIGHT;
+
+    private Direction opposite;
+
+    static {
+        UP.opposite = DOWN;
+        DOWN.opposite = UP;
+        LEFT.opposite = RIGHT;
+        RIGHT.opposite = LEFT;
+    }
+
+    public Direction getOppositeDirection() {
+        return opposite;
+    }
 }
