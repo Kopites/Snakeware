@@ -67,7 +67,7 @@ public class GameArea extends View {
 
         grid = new GridPiece[gridWidth][gridHeight];
 
-        SnakePiece piece = new SnakePiece(GridTile.SnakeHead, Direction.LEFT);
+        SnakePiece piece = new SnakePiece(GridTile.SnakeHead, dir);
         grid[x][y] = piece;
         snakePieces.add(piece);
 

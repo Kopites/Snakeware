@@ -7,4 +7,6 @@
     <string name="game_over">Game Over!</string>
     <string name="save_your_score">Save your score:</string>
     <string name="enter_name">Enter a name to save your score</string>
+    <string name="new_game">New Game</string>
+    <string name="high_scores">High Scores</string>
 </resources>
