@@ -3,6 +3,8 @@ package com.example.s1300465.snake;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.gesture.Gesture;
 import android.graphics.Path;
@@ -22,7 +24,7 @@ import java.util.Random;
 public class GameScreen extends Activity {
     GameArea gameArea;
     TextView txtScore;
-    boolean gameRunning = false;
+    boolean gameRunning = true;
     Direction direction = Direction.UP;
     private int score = 0;
 
@@ -35,6 +37,12 @@ public class GameScreen extends Activity {
         txtScore = (TextView) findViewById(R.id.txtScore);
 
         updateScoreLabel();
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -153,10 +161,27 @@ public class GameScreen extends Activity {
     protected void onPause(){
         super.onPause();
         gameRunning = false;
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(!gameRunning) {
+            initGameLoop();
+        }
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+    }
+
     @Override
     protected void onStop(){
         super.onStop();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         gameRunning = false;
     }
 }
