@@ -6,13 +6,9 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.gesture.Gesture;
-import android.graphics.Path;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -139,6 +135,13 @@ public class GameScreen extends Activity {
         });
 
         final AlertDialog dialog = builder.create();
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                activity.finish();
+            }
+        });
 
         new Handler().postDelayed(new Runnable() {
             @Override
