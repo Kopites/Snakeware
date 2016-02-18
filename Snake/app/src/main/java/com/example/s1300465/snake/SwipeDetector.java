@@ -5,8 +5,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 public class SwipeDetector extends GestureDetector.SimpleOnGestureListener {
-    private static final int SWIPE_MIN_DISTANCE = 120;
-    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    private static final int SWIPE_MIN_DISTANCE = 140;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 40;
     private GameScreen game;
 
     public SwipeDetector(GameScreen game){
