@@ -24,6 +24,7 @@ public class GameArea extends View {
     private int length;
     private int snakeX, snakeY;
     private boolean ateFruit = false;
+    private boolean dead = false;
 
     private ArrayList<SnakePiece> snakePieces = new ArrayList<>();
 
@@ -107,6 +108,8 @@ public class GameArea extends View {
                 if(nextPiece != null) {
                     if(nextPiece.getType() == GridTile.Pickup){
                         ateFruit = true;
+                    }else if(nextPiece.getType() == GridTile.SnakePiece || nextPiece.getType() == GridTile.SnakeHead){
+                        dead = true;
                     }
                 }
                 tempGrid = moveSnakePiece(x, y, tempGrid);
@@ -296,6 +299,10 @@ public class GameArea extends View {
     }
     protected int getGridHeight(){
         return gridHeight;
+    }
+
+    protected boolean isDead(){
+        return dead;
     }
 
     @Override

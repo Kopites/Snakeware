@@ -1,6 +1,8 @@
 package com.example.s1300465.snake;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.gesture.Gesture;
 import android.graphics.Path;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -94,16 +97,47 @@ public class GameScreen extends Activity {
                 updateScoreLabel();
             }
 
+            if(gameArea.isDead()){
+                playerDied();
+            }
+
         }catch(IndexOutOfBoundsException ex){
-            Log.w("Died", "You died!");
-            gameRunning = false;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    initNewGame();
-                }
-            }, 1000);
+            playerDied();
         }
+    }
+
+    protected void playerDied(){
+        Log.w("Died", "You died!");
+        gameRunning = false;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.save_your_score)
+                .setTitle(R.string.game_over);
+
+        LayoutInflater inflater = getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.dialog_gameover, null));
+
+        final Activity activity = this;
+        builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //TODO: Save the users score to a local database
+                activity.finish();
+            }
+        });
+        builder.setNegativeButton(R.string.skip, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                activity.finish();
+            }
+        });
+
+        final AlertDialog dialog = builder.create();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dialog.show();
+            }
+        }, 1000);
     }
 
     protected void updateScoreLabel(){

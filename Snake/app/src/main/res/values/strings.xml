@@ -2,4 +2,9 @@
     <string name="app_name">Snake</string>
     <string name="title_activity_game_screen">GameScreen</string>
     <string name="score">Score: %1$s</string>
+    <string name="save">Save</string>
+    <string name="skip">Skip</string>
+    <string name="game_over">Game Over!</string>
+    <string name="save_your_score">Save your score:</string>
+    <string name="enter_name">Enter a name to save your score</string>
 </resources>
