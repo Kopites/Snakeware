@@ -18,6 +18,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openHighScores(View v){
-
+        startActivity(new Intent(this, HighScoresActivity.class));
     }
 }
