@@ -1,11 +1,13 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.s1300465.snake.GlobalHighScores">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="Global High Scores"
-        android:id="@+id/textView" />
 
-</FrameLayout>
+    <ListView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/lstGlobalScores"
+
+        android:layout_weight="1" />
+</LinearLayout>

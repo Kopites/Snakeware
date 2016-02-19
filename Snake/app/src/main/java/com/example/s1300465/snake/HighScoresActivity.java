@@ -1,5 +1,9 @@
 package com.example.s1300465.snake;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,8 +12,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class HighScoresActivity extends AppCompatActivity {
 
@@ -19,8 +30,8 @@ public class HighScoresActivity extends AppCompatActivity {
         setContentView(R.layout.activity_high_scores);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
+        tabLayout.addTab(tabLayout.newTab().setText(getResources().getText(R.string.local_highscores)));
+        tabLayout.addTab(tabLayout.newTab().setText(getResources().getText(R.string.global_highscores)));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
@@ -44,6 +55,46 @@ public class HighScoresActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+}
+
+class ScoresListViewAdapter extends BaseAdapter{
+    Context context;
+    String[] names;
+    int[] scores;
+
+    public ScoresListViewAdapter(Context context, String[] names, int[] scores){
+        this.context = context;
+        this.names = names;
+        this.scores = scores;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View rowView = inflater.inflate(R.layout.score_row, null, true);
+
+        ((TextView) rowView.findViewById(R.id.txtScoreRank)).setText(String.valueOf(position + 1) + ".");
+        ((TextView) rowView.findViewById(R.id.txtScoreName)).setText(names[position]);
+        ((TextView) rowView.findViewById(R.id.txtScoreScore)).setText(String.valueOf(scores[position]));
+
+        return rowView;
+    }
+
+    @Override
+    public int getCount() {
+        return names.length;
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return null;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return 0;
     }
 }
 

@@ -9,7 +9,10 @@
     <string name="enter_name">Enter a name to save your score</string>
     <string name="new_game">New Game</string>
     <string name="high_scores">High Scores</string>
-    <string name="title_activity_high_scores">HighScoresActivity</string>
+    <string name="title_activity_high_scores">High Scores</string>
+
+    <string name="local_highscores">Local</string>
+    <string name="global_highscores">Global</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
