@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -114,17 +115,22 @@ public class GameScreen extends Activity {
         Log.w("Died", "You died!");
         gameRunning = false;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final DatabaseHelper dbHelper = new DatabaseHelper(this);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.save_your_score)
                 .setTitle(R.string.game_over);
 
         LayoutInflater inflater = getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.dialog_gameover, null));
+        final View view = inflater.inflate(R.layout.dialog_gameover, null);
+        builder.setView(view);
 
         final Activity activity = this;
         builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                //TODO: Save the users score to a local database
+                TextView txtUsername = (TextView) view.findViewById(R.id.txtUsername);
+                String name = txtUsername.getText().toString();
+                dbHelper.saveLocalScore(name, score);
                 activity.finish();
             }
         });
@@ -142,6 +148,7 @@ public class GameScreen extends Activity {
                 activity.finish();
             }
         });
+
 
         new Handler().postDelayed(new Runnable() {
             @Override

@@ -1,7 +1,5 @@
 package com.example.s1300465.snake;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class LocalHighScores extends Fragment {
 
@@ -33,7 +33,20 @@ public class LocalHighScores extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ListView localScores = (ListView) view.findViewById(R.id.lstLocalScores);
-        ScoresListViewAdapter adapter = new ScoresListViewAdapter(getActivity(), new String[]{"AAA", "BBB", "Butts"}, new int[]{12, 8, 5});
+
+        ArrayList<Score> scores = new DatabaseHelper(getContext()).getLocalScores();
+        ArrayList<String> names = new ArrayList<>();
+        ArrayList<Integer> scoreValues = new ArrayList<>();
+
+        for(Score s : scores){
+            names.add(s.getName());
+            scoreValues.add(s.getScore());
+        }
+
+        String[] namesArray = names.toArray(new String[names.size()]);
+        int[] scoreValuesArray = ((HighScoresActivity) getActivity()).convertIntArray(scoreValues);
+
+        ScoresListViewAdapter adapter = new ScoresListViewAdapter(getActivity(), namesArray, scoreValuesArray);
         localScores.setAdapter(adapter);
 
         Log.d("Count", adapter.getCount() + "");

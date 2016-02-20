@@ -22,6 +22,9 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Iterator;
+import java.util.List;
+
 public class HighScoresActivity extends AppCompatActivity {
 
     @Override
@@ -57,6 +60,16 @@ public class HighScoresActivity extends AppCompatActivity {
         });
     }
 
+    public int[] convertIntArray(List<Integer> input){
+        int[] output = new int[input.size()];
+
+        Iterator<Integer> iterator = input.iterator();
+        for (int i = 0; i < output.length; i++) {
+            output[i] = iterator.next();
+        }
+
+        return output;
+    }
 }
 
 class ScoresListViewAdapter extends BaseAdapter{
