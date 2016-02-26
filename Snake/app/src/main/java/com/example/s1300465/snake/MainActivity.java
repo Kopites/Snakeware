@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.jar.Manifest;
@@ -24,6 +25,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         dbh = new DatabaseHelper(this);
+
+        //For Debugging purposes:
+        (findViewById(R.id.textView)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
+                startActivity(dbmanager);
+            }
+        });
 
         if(checkPermissions()){
             storePhoneNumber();

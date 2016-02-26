@@ -20,6 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".GameScreen" />
+        <activity android:name="com.example.s1300465.snake.AndroidDatabaseManager"
+            android:theme="@style/Theme.AppCompat.Light"/>
         <activity
             android:name=".HighScoresActivity"
             android:label="@string/title_activity_high_scores" >
