@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 public class IncomingCallInterceptor extends BroadcastReceiver {
     private long startTime, endTime;

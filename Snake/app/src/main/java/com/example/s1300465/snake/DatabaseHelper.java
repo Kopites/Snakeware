@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "SnakeScores";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     public DatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -106,6 +106,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void savePhoneCall(String participant, boolean outgoing, long duration, long time, int latitude, int longitude){
+        if(participant == null || duration == 0){
+            return;
+        }
         ContentValues row = new ContentValues();
         row.put("Phone", 1); //TODO: fetch phone ID from shared prefs
         row.put("Participant", participant);
