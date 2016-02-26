@@ -26,6 +26,18 @@
             android:name=".HighScoresActivity"
             android:label="@string/title_activity_high_scores" >
         </activity>
+        
+        <receiver android:name=".OutgoingCallInterceptor">
+            <intent-filter>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".IncomingCallInterceptor">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

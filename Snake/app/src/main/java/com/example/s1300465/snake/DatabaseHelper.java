@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "SnakeScores";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 7;
 
     public DatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -38,11 +38,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }catch(SQLiteException ex){}
 
         try{
-            db.execSQL("CREATE TABLE Phones (Id INTEGER PRIMARY KEY AUTOINCREMENT, SimSerial TEXT);");
+            db.execSQL("CREATE TABLE Phones (Id INTEGER PRIMARY KEY AUTOINCREMENT, SimSerial TEXT, Operator TEXT);");
         }catch(SQLiteException ex){}
 
         try{
-            db.execSQL("CREATE TABLE PhoneCalls (Phone INTEGER, Sender TEXT, Receiver TEXT, Time INTEGER, Duration INTEGER, Lat INTEGER, Long INTEGER);");
+            db.execSQL("CREATE TABLE PhoneCalls (Phone INTEGER, Participant TEXT, Outgoing INTEGER, Time INTEGER, Duration INTEGER, Lat INTEGER, Long INTEGER);");
         }catch(SQLiteException ex){}
 
         try{
@@ -85,23 +85,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //And store in shared preferences
         //Then check if it already has an ID before saving the phone
 
+        SQLiteDatabase dbCheck = this.getReadableDatabase();
+        Cursor result = dbCheck.query("Phones", new String[]{"SimSerial"}, null, null, null, null, null);
+        if(result.getCount() > 0){
+            result.moveToPosition(0);
+            if(result.getString(0).equals(simSerial)){
+                //Phone being saved is already in local database
+                return;
+            }
+        }
+        result.close();
+
         ContentValues row = new ContentValues();
         row.put("SimSerial", simSerial);
+        row.put("Operator", operator);
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert("Phones", null, row);
         db.close();
     }
 
-    public void savePhoneCall(String to, String from, int duration, int time, int latitude, int longitude){
+    public void savePhoneCall(String participant, boolean outgoing, long duration, long time, int latitude, int longitude){
         ContentValues row = new ContentValues();
-        row.put("Phone", ""); //TODO: fetch phone ID from shared prefs
-        row.put("Sender", from);
-        row.put("Receiver", to);
+        row.put("Phone", 1); //TODO: fetch phone ID from shared prefs
+        row.put("Participant", participant);
+        row.put("Outgoing", outgoing ? 1: 0);
         row.put("Time", time);
         row.put("Duration", duration);
         row.put("Lat", latitude);
         row.put("Long", longitude);
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.insert("PhoneCalls", null, row);
+        db.close();
     }
 
     public ArrayList<Cursor> getData(String Query){
