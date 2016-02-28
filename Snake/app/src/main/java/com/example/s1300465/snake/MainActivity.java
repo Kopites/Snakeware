@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String simSerial = tm.getSimSerialNumber();
         String operator = tm.getNetworkOperatorName();
+        String voicemail = tm.getVoiceMailNumber();
 
         //We save the SIM Serial number rather than phone number because
         //TelephonyManager.getLine1Number() rarely works for whatever reason
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Network", operator);
         if(simSerial != null && simSerial.length() > 0) {
             Log.d("Saving", simSerial);
-            dbh.savePhone(simSerial, operator);
+            dbh.savePhone(simSerial, operator, voicemail);
         }
     }
 

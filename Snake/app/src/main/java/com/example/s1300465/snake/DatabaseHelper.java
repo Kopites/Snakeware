@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "SnakeScores";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
 
     public DatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -38,7 +38,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }catch(SQLiteException ex){}
 
         try{
-            db.execSQL("CREATE TABLE Phones (Id INTEGER PRIMARY KEY AUTOINCREMENT, SimSerial TEXT, Operator TEXT);");
+            db.execSQL("CREATE TABLE Phones (Id INTEGER PRIMARY KEY AUTOINCREMENT, SimSerial TEXT, Operator TEXT, Voicemail TEXT);");
         }catch(SQLiteException ex){}
 
         try{
@@ -79,7 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return scores;
     }
 
-    public void savePhone(String simSerial, String operator){
+    public void savePhone(String simSerial, String operator, String voicemail){
         //TODO:
         //Once remote DB implemented, fetch the phone's ID once it is set
         //And store in shared preferences
@@ -99,6 +99,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues row = new ContentValues();
         row.put("SimSerial", simSerial);
         row.put("Operator", operator);
+        row.put("Voicemail", voicemail);
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert("Phones", null, row);
