@@ -18,8 +18,6 @@ public class OutgoingCallInterceptor extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         final DatabaseHelper dbh = new DatabaseHelper(context);
 
-        //TODO: Something weird going on here, State doesn't work properly in OutgoingCall
-
         //Have to listen differently for Outgoing calls:
         // doesn't use the TelephonyManager.EXTRA_STATE, so register a listener
         // that detects when the state is changing, and when the call starts and ends
