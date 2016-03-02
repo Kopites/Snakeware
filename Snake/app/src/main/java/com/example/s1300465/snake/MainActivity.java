@@ -13,11 +13,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.jar.Manifest;
 
 public class MainActivity extends AppCompatActivity {
     DatabaseHelper dbh;
-    TelephonyManager tm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +34,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(checkPermissions()){
-            storePhoneNumber();
-        } // else onRequestPermissionsResult will be called
+        getPermissions();
     }
 
-    public boolean checkPermissions(){
+    public boolean getPermissions(){
         ArrayList<String> permissions = new ArrayList<>();
         if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_DENIED){
             permissions.add(android.Manifest.permission.READ_PHONE_STATE);
@@ -62,30 +60,10 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    public void storePhoneNumber(){
-        tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        String simSerial = tm.getSimSerialNumber();
-        String operator = tm.getNetworkOperatorName();
-        String voicemail = tm.getVoiceMailNumber();
-        String imei = tm.getDeviceId();
-
-        //We save the SIM Serial number rather than phone number because
-        //TelephonyManager.getLine1Number() rarely works for whatever reason
-        //whereas a working phone is guaranteed to have a SIM serial number for ID purposes
-
-        Log.d("SimSerial", simSerial);
-        Log.d("Network", operator);
-        Log.d("IMEI", imei);
-        if(simSerial != null && simSerial.length() > 0) {
-            Log.d("[Not] Saving", simSerial);
-            Log.d("Loc", dbh.getLocation().toString());
-            //dbh.savePhone(simSerial, operator, voicemail);
-        }
-    }
-
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if(checkPermissions()){
-            storePhoneNumber();
+        //If any of the requests were denied, just keep asking again
+        if(Arrays.asList(grantResults).contains(PackageManager.PERMISSION_DENIED)){
+            getPermissions();
         }
     }
 

