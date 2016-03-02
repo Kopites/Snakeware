@@ -2,6 +2,7 @@ package com.example.s1300465.snake;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -26,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
         dbh = new DatabaseHelper(this);
 
+        getPermissions();
+
         //For Debugging purposes:
         (findViewById(R.id.textView)).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -34,7 +37,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        getPermissions();
+        IncomingSMSReceiver smsReceiver = new IncomingSMSReceiver();
+        IntentFilter smsFilter  = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+        smsFilter.setPriority(1000);
+        this.registerReceiver(smsReceiver, smsFilter);
     }
 
     public boolean getPermissions(){
