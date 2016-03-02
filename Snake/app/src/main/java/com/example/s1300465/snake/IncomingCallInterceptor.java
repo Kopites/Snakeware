@@ -13,11 +13,9 @@ public class IncomingCallInterceptor extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("Broadcast", "incoming call triggered");
         DatabaseHelper dbh = new DatabaseHelper(context);
 
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
-        Log.d("State", state);
 
         if(state.equals(TelephonyManager.EXTRA_STATE_RINGING)){
             incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
@@ -32,7 +30,7 @@ public class IncomingCallInterceptor extends BroadcastReceiver {
             long endTime = System.currentTimeMillis();
             long callDuration = endTime - startTime;
 
-            dbh.savePhoneCall(incomingNumber, false, callDuration, startTime, 0, 0); //TODO: fetch location of call
+            dbh.savePhoneCall(incomingNumber, false, callDuration, startTime);
 
             startTime = 0;
             incomingNumber = null;

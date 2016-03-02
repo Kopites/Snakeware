@@ -35,7 +35,7 @@ public class OutgoingCallInterceptor extends BroadcastReceiver {
                     }
                     endTime = System.currentTimeMillis();
                     long duration = endTime - startTime;
-                    dbh.savePhoneCall(outgoingNumber, true, duration, startTime, 0, 0);
+                    dbh.savePhoneCall(outgoingNumber, true, duration, startTime);
                 }
             }
         }, PhoneStateListener.LISTEN_CALL_STATE);

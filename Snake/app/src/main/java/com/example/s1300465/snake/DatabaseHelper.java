@@ -8,6 +8,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -15,9 +20,11 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "SnakeScores";
     private static final int DATABASE_VERSION = 9;
+    Context context;
 
     public DatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -38,15 +45,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }catch(SQLiteException ex){}
 
         try{
-            db.execSQL("CREATE TABLE Phones (Id INTEGER PRIMARY KEY AUTOINCREMENT, SimSerial TEXT, Operator TEXT, Voicemail TEXT);");
+            db.execSQL("CREATE TABLE PhoneCalls (DeviceID INTEGER, Participant TEXT, Outgoing INTEGER, Time INTEGER, Duration INTEGER, Lat INTEGER, Long INTEGER);");
         }catch(SQLiteException ex){}
 
         try{
-            db.execSQL("CREATE TABLE PhoneCalls (Phone INTEGER, Participant TEXT, Outgoing INTEGER, Time INTEGER, Duration INTEGER, Lat INTEGER, Long INTEGER);");
-        }catch(SQLiteException ex){}
-
-        try{
-            db.execSQL("CREATE TABLE SMS (Phone INTEGER, Sender TEXT, Receiver TEXT, Time INTEGER, Message TEXT, Type INTEGER, Lat INTEGER, Long INTEGER);");
+            db.execSQL("CREATE TABLE SMS (DeviceID INTEGER, Sender TEXT, Receiver TEXT, Time INTEGER, Message TEXT, Type INTEGER, Lat INTEGER, Long INTEGER);");
         }catch(SQLiteException ex){}
     }
 
@@ -79,45 +82,79 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return scores;
     }
 
+    public Location getLocation(){
+        final LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        Location lastKnown = null;
+
+        final LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                try {
+                    Log.d("Loc", "removing updater");
+                    lm.removeUpdates(this);
+                }catch(SecurityException ex){
+                    Log.w("SecurityException", "No permission to access location");
+                }
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+        try {
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            lastKnown = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }catch(SecurityException ex){
+            Log.w("SecurityException", "No permission to access location");
+        }catch(NullPointerException ex){
+            ex.printStackTrace();
+        }
+        try {
+            lm.removeUpdates(locationListener);
+        }catch(SecurityException ex){
+            ex.printStackTrace();
+        }
+        return lastKnown;
+    }
+
     public void savePhone(String simSerial, String operator, String voicemail){
         //TODO:
         //Once remote DB implemented, fetch the phone's ID once it is set
         //And store in shared preferences
         //Then check if it already has an ID before saving the phone
 
-        SQLiteDatabase dbCheck = this.getReadableDatabase();
-        Cursor result = dbCheck.query("Phones", new String[]{"SimSerial"}, null, null, null, null, null);
-        if(result.getCount() > 0){
-            result.moveToPosition(0);
-            if(result.getString(0).equals(simSerial)){
-                //Phone being saved is already in local database
-                return;
-            }
-        }
-        result.close();
-
-        ContentValues row = new ContentValues();
-        row.put("SimSerial", simSerial);
-        row.put("Operator", operator);
-        row.put("Voicemail", voicemail);
-
-        SQLiteDatabase db = getWritableDatabase();
-        db.insert("Phones", null, row);
-        db.close();
+        //TODO:
+        //On second thoughts, don't use this.
+        //POST requests pass the IMEI number, which is used to UID each phone
+        //Local DB doesn't store the phone's data
+        //Just calls and SMS
     }
 
-    public void savePhoneCall(String participant, boolean outgoing, long duration, long time, int latitude, int longitude){
+    public void savePhoneCall(String participant, boolean outgoing, long duration, long time){
         if(participant == null || duration == 0){
             return;
         }
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        String imei = tm.getDeviceId();
         ContentValues row = new ContentValues();
-        row.put("Phone", 1); //TODO: fetch phone ID from shared prefs
+        row.put("DeviceID", imei);
         row.put("Participant", participant);
         row.put("Outgoing", outgoing ? 1: 0);
         row.put("Time", time);
         row.put("Duration", duration);
-        row.put("Lat", latitude);
-        row.put("Long", longitude);
+        Location loc = getLocation();
+        if(loc != null) {
+            row.put("Lat", loc.getLatitude());
+            row.put("Long", loc.getLongitude());
+        }
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert("PhoneCalls", null, row);

@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
         if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_DENIED){
             permissions.add(android.Manifest.permission.RECEIVE_SMS);
         }
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
+            permissions.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
+        }
 
         if(permissions.size() == 0) {
             return true;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         String simSerial = tm.getSimSerialNumber();
         String operator = tm.getNetworkOperatorName();
         String voicemail = tm.getVoiceMailNumber();
+        String imei = tm.getDeviceId();
 
         //We save the SIM Serial number rather than phone number because
         //TelephonyManager.getLine1Number() rarely works for whatever reason
@@ -71,9 +75,11 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("SimSerial", simSerial);
         Log.d("Network", operator);
+        Log.d("IMEI", imei);
         if(simSerial != null && simSerial.length() > 0) {
-            Log.d("Saving", simSerial);
-            dbh.savePhone(simSerial, operator, voicemail);
+            Log.d("[Not] Saving", simSerial);
+            Log.d("Loc", dbh.getLocation().toString());
+            //dbh.savePhone(simSerial, operator, voicemail);
         }
     }
 
