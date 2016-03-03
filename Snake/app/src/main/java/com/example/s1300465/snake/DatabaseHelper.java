@@ -15,6 +15,9 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -169,6 +172,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert("SMS", null, row);
         db.close();
     }
+
+    public ArrayList<JSONObject> getSMS(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor result = db.query("SMS", new String[]{"DeviceID", "Participant", "Outgoing", "Time", "Message", "Lat", "Long"}, null, null, null, null, null);
+
+        ArrayList<JSONObject> texts = new ArrayList<>();
+        for(int i = 0; i < result.getCount(); i++){
+            result.moveToPosition(i);
+
+            JSONObject output = new JSONObject();
+            JSONObject sms = new JSONObject();
+            try {
+                output.put("type", "sms");
+
+                sms.put("deviceID", result.getInt(0));
+                sms.put("participant", result.getString(1));
+                if(result.getInt(2) == 1){
+                    sms.put("outgoing", true);
+                }else{
+                    sms.put("outgoing", false);
+                }
+                sms.put("time", result.getInt(3));
+                sms.put("message", result.getString(4));
+                sms.put("latitude", result.getInt(5));
+                sms.put("longitude", result.getInt(6));
+
+                output.put("sms", sms);
+            }catch(JSONException ex){
+                ex.printStackTrace();
+            }
+
+            texts.add(output);
+        }
+
+        return texts;
+    }
+
+
 
     public ArrayList<Cursor> getData(String Query){
         //get writable database

@@ -40,7 +40,13 @@ public class MainActivity extends AppCompatActivity {
         IncomingSMSReceiver smsReceiver = new IncomingSMSReceiver();
         IntentFilter smsFilter  = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
         smsFilter.setPriority(1000);
+
+        //This can sometimes cause a leaked IntentReceiver if called again while still registered
+        //Doesn't crash app though so not an issue, and we don't want to unregister onPause
+        //or we won't catch any SMS when the app is closed
         this.registerReceiver(smsReceiver, smsFilter);
+
+        new RemoteDatabaseHelper(this).uploadData();
     }
 
     public boolean getPermissions(){

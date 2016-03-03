@@ -17,6 +17,7 @@ public class IncomingCallInterceptor extends BroadcastReceiver {
 
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 
+        Log.d("State Change", state);
         if(state.equals(TelephonyManager.EXTRA_STATE_RINGING)){
             incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
             startTime = System.currentTimeMillis();
