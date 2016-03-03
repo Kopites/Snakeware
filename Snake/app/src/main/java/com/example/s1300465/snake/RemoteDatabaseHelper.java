@@ -34,6 +34,12 @@ public class RemoteDatabaseHelper {
         while(textIterator.hasNext()){
             new PostRequester(context).execute(textIterator.next());
         }
+
+        ArrayList<JSONObject> calls = new DatabaseHelper(context).getCalls();
+        Iterator<JSONObject> callsIterator = calls.iterator();
+        while(callsIterator.hasNext()){
+            new PostRequester(context).execute(callsIterator.next());
+        }
     }
 }
 
@@ -137,7 +143,7 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
             if(type.equalsIgnoreCase("SMS")){
                 new DatabaseHelper(context).removeSMS(rowID);
             }else if(type.equalsIgnoreCase("Call")){
-
+                new DatabaseHelper(context).removeCall(rowID);
             }
         }
 

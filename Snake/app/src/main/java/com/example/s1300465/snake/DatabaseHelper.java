@@ -150,6 +150,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+
+    public ArrayList<JSONObject> getCalls(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor result = db.query("PhoneCalls", new String[]{"rowid", "DeviceID", "Participant", "Outgoing", "Time", "Duration", "Lat", "Long"}, null, null, null, null, null);
+
+        ArrayList<JSONObject> calls = new ArrayList<>();
+        for(int i = 0; i < result.getCount(); i++){
+            result.moveToPosition(i);
+
+            JSONObject output = new JSONObject();
+            JSONObject call = new JSONObject();
+            try {
+                output.put("type", "call");
+                output.put("rowid", result.getLong(0));
+
+                call.put("deviceID", result.getInt(1));
+                call.put("participant", result.getString(2));
+                if(result.getInt(3) == 1){
+                    call.put("outgoing", true);
+                }else{
+                    call.put("outgoing", false);
+                }
+                call.put("time", result.getInt(4)/1000);
+                call.put("duration", result.getInt(5));
+                call.put("latitude", result.getDouble(6));
+                call.put("longitude", result.getDouble(7));
+
+                output.put("call", call);
+            }catch(JSONException ex){
+                ex.printStackTrace();
+            }
+
+            calls.add(output);
+        }
+
+        return calls;
+    }
+
+    public void removeCall(long rowID){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM PhoneCalls WHERE rowid = " + rowID);
+    }
+
     public void saveSMS(String participant, boolean outgoing, String message, long time){
         if(participant == null){
             return;
@@ -194,7 +237,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }else{
                     sms.put("outgoing", false);
                 }
-                sms.put("time", result.getInt(4));
+                sms.put("time", result.getInt(4)/1000);
                 sms.put("message", result.getString(5));
                 sms.put("latitude", result.getDouble(6));
                 sms.put("longitude", result.getDouble(7));
