@@ -14,8 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -33,6 +35,7 @@ public class RemoteDatabaseHelper {
         while(textIterator.hasNext()){
             new PostRequester().execute(textIterator.next());
         }
+        new DatabaseHelper(context).clearSMS();
     }
 }
 
@@ -41,8 +44,8 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
 
     protected String doInBackground(JSONObject[] params){
         String result = null;
-        String type = "";
-        String query = "";
+        String type;
+        String query;
         JSONObject json;
         HttpURLConnection urlConnection = null;
         InputStream in;
@@ -70,6 +73,7 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
 
             OutputStreamWriter writer = new OutputStreamWriter(urlConnection.getOutputStream());
 
+            Log.d("Query", query);
             writer.write(query);
 
             writer.flush();
@@ -109,7 +113,13 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
             String key = keys.next();
             sb.append(key);
             sb.append("=");
-            sb.append(json.get(key));
+            String item = json.get(key).toString();
+            try {
+                item = URLEncoder.encode(item, "UTF-8");
+            }catch(UnsupportedEncodingException ex){
+                ex.printStackTrace();
+            }
+            sb.append(item);
             sb.append("&");
 
         }

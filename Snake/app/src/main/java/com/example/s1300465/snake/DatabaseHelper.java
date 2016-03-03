@@ -195,8 +195,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }
                 sms.put("time", result.getInt(3));
                 sms.put("message", result.getString(4));
-                sms.put("latitude", result.getInt(5));
-                sms.put("longitude", result.getInt(6));
+                sms.put("latitude", result.getDouble(5));
+                sms.put("longitude", result.getDouble(6));
 
                 output.put("sms", sms);
             }catch(JSONException ex){
@@ -207,6 +207,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return texts;
+    }
+
+    public void clearSMS(){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM SMS");
     }
 
 
