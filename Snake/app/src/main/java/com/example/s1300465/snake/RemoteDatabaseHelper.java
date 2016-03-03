@@ -29,22 +29,25 @@ public class RemoteDatabaseHelper {
     }
 
     public void uploadData(){
-        new DatabaseHelper(context).getSMS();
         ArrayList<JSONObject> texts = new DatabaseHelper(context).getSMS();
         Iterator<JSONObject> textIterator = texts.iterator();
         while(textIterator.hasNext()){
-            new PostRequester().execute(textIterator.next());
+            new PostRequester(context).execute(textIterator.next());
         }
-        new DatabaseHelper(context).clearSMS();
     }
 }
 
 class PostRequester extends AsyncTask<JSONObject, String, String> {
+    Context context;
     int status;
+    String type; //sms or call
+    long rowID; //The DB row of the SMS we're dealing with
+    public PostRequester(Context context){
+        this.context = context;
+    }
 
     protected String doInBackground(JSONObject[] params){
         String result = null;
-        String type;
         String query;
         JSONObject json;
         HttpURLConnection urlConnection = null;
@@ -129,6 +132,15 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
 
     protected void onPostExecute(String result){
         Log.d("Result", result);
+        if(result.equalsIgnoreCase("Success")){
+            //If the query was successful, we can remove the row from the local database
+            if(type.equalsIgnoreCase("SMS")){
+                new DatabaseHelper(context).removeSMS(rowID);
+            }else if(type.equalsIgnoreCase("Call")){
+                
+            }
+        }
+
         if(status >= HttpURLConnection.HTTP_BAD_REQUEST){
             Log.d("Bad Request", status + "");
         }
