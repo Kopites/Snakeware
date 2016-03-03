@@ -56,6 +56,7 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
         try {
             json = params[0];
             type = json.getString("type");
+            rowID = json.getLong("rowid");
             JSONObject content = json.getJSONObject(type);
             query = jsonToQuery(content);
         }catch(JSONException ex){
@@ -124,7 +125,6 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
             }
             sb.append(item);
             sb.append("&");
-
         }
 
         return sb.toString();
@@ -137,7 +137,7 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
             if(type.equalsIgnoreCase("SMS")){
                 new DatabaseHelper(context).removeSMS(rowID);
             }else if(type.equalsIgnoreCase("Call")){
-                
+
             }
         }
 
