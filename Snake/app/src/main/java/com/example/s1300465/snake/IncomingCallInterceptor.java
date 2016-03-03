@@ -22,9 +22,9 @@ public class IncomingCallInterceptor extends BroadcastReceiver {
             incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
             startTime = System.currentTimeMillis();
         }else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
-            //If the phone changed to idle but there's no startTime stored, then it wasn't previously ringing
-            //(probably an outgoing call)
             if(incomingNumber == null || startTime == 0){
+                //If the phone changed to idle but there's no startTime stored, then it wasn't previously ringing
+                //(probably an outgoing call)
                 return;
             }
 

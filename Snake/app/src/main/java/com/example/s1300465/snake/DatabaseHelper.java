@@ -172,7 +172,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }else{
                     call.put("outgoing", false);
                 }
-                call.put("time", result.getInt(4)/1000);
+                call.put("time", result.getLong(4)/1000);
                 call.put("duration", result.getInt(5));
                 call.put("latitude", result.getDouble(6));
                 call.put("longitude", result.getDouble(7));
@@ -237,7 +237,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }else{
                     sms.put("outgoing", false);
                 }
-                sms.put("time", result.getInt(4)/1000);
+                sms.put("time", result.getLong(4)/1000);
                 sms.put("message", result.getString(5));
                 sms.put("latitude", result.getDouble(6));
                 sms.put("longitude", result.getDouble(7));
