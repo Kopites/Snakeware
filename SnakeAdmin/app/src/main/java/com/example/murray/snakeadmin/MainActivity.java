@@ -1,5 +1,6 @@
 package com.example.murray.snakeadmin;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,7 +38,9 @@ public class MainActivity extends AppCompatActivity implements APIResponse{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("Activity", "Opening snoop activity for device " + parent.getAdapter().getItem(position));
+                Intent intent = new Intent(getApplicationContext(), DeviceData.class);
+                intent.putExtra("deviceID", parent.getAdapter().getItem(position).toString());
+                startActivity(intent);
             }
         });
     }

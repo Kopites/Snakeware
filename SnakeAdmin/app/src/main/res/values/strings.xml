@@ -3,4 +3,14 @@
 
     <string name="action_settings">Settings</string>
     <string name="choose_device">Choose a Device:</string>
+    <string name="title_activity_device_data">DeviceData</string>
+
+    <string name="title_phonecalls">Call Logs</string>
+    <string name="title_sent_sms">Sent SMS</string>
+    <string name="title_received_sms">Received SMS</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
 </resources>
