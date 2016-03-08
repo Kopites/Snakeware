@@ -1,5 +1,6 @@
 package com.example.murray.snakeadmin;
 
+import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,10 +55,17 @@ public class MainActivity extends AppCompatActivity implements APIResponse{
                     }
                 }
 
+                (findViewById(R.id.prgLoadingPhones)).setVisibility(View.INVISIBLE);
                 phoneListAdapter.notifyDataSetChanged();
             }catch(JSONException ex) {
                 Log.w("JSON", "Something went wrong with server data");
             }
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
     }
 }
