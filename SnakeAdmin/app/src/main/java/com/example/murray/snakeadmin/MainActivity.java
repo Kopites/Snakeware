@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,6 +18,8 @@ import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity implements APIResponse{
     ArrayList<String> phones = new ArrayList<>();
+    ListView listView;
+    PhoneListAdapter phoneListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,28 +27,17 @@ public class MainActivity extends AppCompatActivity implements APIResponse{
         setContentView(R.layout.activity_main);
 
         new API(this).fetchPhones();
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+        listView = (ListView) findViewById(R.id.phonesList);
+        phoneListAdapter = new PhoneListAdapter(this, phones);
+        listView.setAdapter(phoneListAdapter);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("Activity", "Opening snoop activity for device " + parent.getAdapter().getItem(position));
+            }
+        });
     }
 
     @Override
@@ -57,8 +52,10 @@ public class MainActivity extends AppCompatActivity implements APIResponse{
                         phones.add(((JSONObject) results.get(key)).getString("deviceID"));
                     }
                 }
+
+                phoneListAdapter.notifyDataSetChanged();
             }catch(JSONException ex) {
-                Log.d("JSON", "Something went wrong with server data");
+                Log.w("JSON", "Something went wrong with server data");
             }
         }
     }
