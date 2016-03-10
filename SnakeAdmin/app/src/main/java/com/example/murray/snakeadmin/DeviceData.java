@@ -137,13 +137,13 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
                 CallListAdapter callListAdapter = new CallListAdapter(getActivity(), list);
                 listView.setAdapter(callListAdapter);
             }else if(section == 2){
-                //new API(this).fetchReceivedSMS(deviceID);
-                CallListAdapter callListAdapter = new CallListAdapter(getActivity(), list);
-                listView.setAdapter(callListAdapter);
+                new API(this).fetchReceivedSMS(deviceID);
+                SMSAdapter smsAdapter = new SMSAdapter(getActivity(), list, false);
+                listView.setAdapter(smsAdapter);
             }else if(section == 3){
-                //new API(this).fetchSentSMS(deviceID);
-                CallListAdapter callListAdapter = new CallListAdapter(getActivity(), list);
-                listView.setAdapter(callListAdapter);
+                new API(this).fetchSentSMS(deviceID);
+                SMSAdapter smsAdapter = new SMSAdapter(getActivity(), list, true);
+                listView.setAdapter(smsAdapter);
             }
             return rootView;
         }
