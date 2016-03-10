@@ -9,6 +9,8 @@
     <string name="title_sent_sms">Sent SMS</string>
     <string name="title_received_sms">Received SMS</string>
 
+    <string name="no_events">No Events Found!</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

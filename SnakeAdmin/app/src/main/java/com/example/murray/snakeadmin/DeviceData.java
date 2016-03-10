@@ -145,6 +145,9 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
                 SMSAdapter smsAdapter = new SMSAdapter(getActivity(), list, true);
                 listView.setAdapter(smsAdapter);
             }
+
+            listView.setEmptyView(rootView.findViewById(R.id.txtEmptyList));
+
             return rootView;
         }
 
