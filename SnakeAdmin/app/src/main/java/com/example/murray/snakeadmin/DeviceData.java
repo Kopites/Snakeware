@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,29 +18,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
-public class DeviceData extends AppCompatActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class DeviceData extends AppCompatActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+
     private NavigationDrawerFragment mNavigationDrawerFragment;
-
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
     private CharSequence mTitle;
+    private String deviceID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_data);
         Intent intent = getIntent();
+        deviceID = intent.getStringExtra("deviceID");
 
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mNavigationDrawerFragment.setDeviceID(intent.getStringExtra("deviceID"));
+        mNavigationDrawerFragment.setDeviceID(deviceID);
         mTitle = getTitle();
 
         // Set up the drawer.
@@ -48,10 +51,13 @@ public class DeviceData extends AppCompatActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+        Intent intent = getIntent();
+        deviceID = intent.getStringExtra("deviceID");
         // update the main content by replacing fragments
+        restoreActionBar();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1, deviceID))
                 .commit();
     }
 
@@ -78,28 +84,11 @@ public class DeviceData extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.device_data, menu);
-            restoreActionBar();
-            return true;
-        }
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -107,22 +96,28 @@ public class DeviceData extends AppCompatActivity
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends Fragment implements APIResponse {
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        private static String deviceID;
+        private ListView listView;
+        private static ArrayList<JSONObject> list;
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        public static PlaceholderFragment newInstance(int sectionNumber, String id) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
+            deviceID = id;
+            list = new ArrayList<>();
             return fragment;
         }
 
@@ -130,9 +125,24 @@ public class DeviceData extends AppCompatActivity
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_device_data, container, false);
+            listView = (ListView) rootView.findViewById(R.id.lstDataView);
+
+            int section = getArguments().getInt(ARG_SECTION_NUMBER);
+            if(section == 1) {
+                new API(this).fetchPhoneCalls(deviceID);
+                CallListAdapter callListAdapter = new CallListAdapter(getActivity(), list);
+                listView.setAdapter(callListAdapter);
+            }else if(section == 2){
+                new API(this).fetchReceivedSMS(deviceID);
+                CallListAdapter callListAdapter = new CallListAdapter(getActivity(), list);
+                listView.setAdapter(callListAdapter);
+            }else if(section == 3){
+                new API(this).fetchSentSMS(deviceID);
+                CallListAdapter callListAdapter = new CallListAdapter(getActivity(), list);
+                listView.setAdapter(callListAdapter);
+            }
             return rootView;
         }
 
@@ -141,6 +151,32 @@ public class DeviceData extends AppCompatActivity
             super.onAttach(activity);
             ((DeviceData) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
+        }
+
+        @Override
+        public void resultsReturned(JSONObject results) {
+            //When the API returns the data we want
+            //Clear the list that's being displayed, then refill it
+            //with JSONObjects of each item
+            if(results != null) {
+                list.clear();
+                try {
+                    //Convert the returned JSON list of deviceIDs into an ArrayList
+                    Iterator<?> keys = results.keys();
+                    while(keys.hasNext()) {
+                        String key = (String) keys.next();
+
+                        if(results.get(key) instanceof JSONObject){
+                            list.add(((JSONObject) results.get(key)));
+                        }
+                    }
+
+                    //Then get the current adapter and tell it to update
+                    ((ArrayAdapter<JSONObject>) listView.getAdapter()).notifyDataSetChanged();
+                }catch(JSONException ex) {
+                    Log.w("JSON", "Something went wrong with server data");
+                }
+            }
         }
     }
 

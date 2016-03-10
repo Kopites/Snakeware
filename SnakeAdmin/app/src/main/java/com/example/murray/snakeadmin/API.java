@@ -27,6 +27,15 @@ public class API {
     public void fetchPhones(){
         new APIJSONFetcher(obj).execute(URL + "/get_phones.php");
     }
+    public void fetchPhoneCalls(String deviceID){
+        new APIJSONFetcher(obj).execute(URL + "/get_calls.php?deviceID=" + deviceID);
+    }
+    public void fetchSentSMS(String deviceID) {
+        new APIJSONFetcher(obj).execute(URL + "/get_sms.php?outgoing=true&deviceID=" + deviceID);
+    }
+    public void fetchReceivedSMS(String deviceID){
+        new APIJSONFetcher(obj).execute(URL + "/get_sms.php?outgoing=false&deviceID=" + deviceID);
+    }
 }
 
 class APIJSONFetcher extends AsyncTask<String, String, JSONObject> {
