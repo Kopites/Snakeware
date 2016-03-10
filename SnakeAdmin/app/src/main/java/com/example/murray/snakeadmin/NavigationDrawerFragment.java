@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -152,6 +153,7 @@ public class NavigationDrawerFragment extends Fragment {
                 if (!isAdded()) {
                     return;
                 }
+                mCallbacks.onNavigationDrawerClosed();
 
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
@@ -162,6 +164,8 @@ public class NavigationDrawerFragment extends Fragment {
                 if (!isAdded()) {
                     return;
                 }
+
+                mCallbacks.onNavigationDrawerOpened();
 
                 if (!mUserLearnedDrawer) {
                     // The user manually opened the drawer; store this flag to prevent auto-showing
@@ -219,7 +223,6 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallbacks = null;
     }
 
     @Override
@@ -262,8 +265,6 @@ public class NavigationDrawerFragment extends Fragment {
     private void showGlobalContextActionBar() {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setTitle("Device " + deviceID);
     }
 
     private ActionBar getActionBar() {
@@ -272,5 +273,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     public interface NavigationDrawerCallbacks {
         void onNavigationDrawerItemSelected(int position);
+        void onNavigationDrawerClosed();
+        void onNavigationDrawerOpened();
     }
 }

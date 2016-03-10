@@ -43,7 +43,7 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
 
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setDeviceID(deviceID);
-        mTitle = getTitle();
+        mTitle = getString(R.string.title_phonecalls);
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
@@ -54,15 +54,12 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
         Intent intent = getIntent();
         deviceID = intent.getStringExtra("deviceID");
         // update the main content by replacing fragments
-        restoreActionBar();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, PlaceholderFragment.newInstance(position + 1, deviceID))
                 .commit();
-    }
 
-    public void onSectionAttached(int number) {
-        switch (number) {
+        switch (position + 1) {
             case 1:
                 mTitle = getString(R.string.title_phonecalls);
                 break;
@@ -73,12 +70,17 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
                 mTitle = getString(R.string.title_sent_sms);
                 break;
         }
+        getSupportActionBar().setTitle(mTitle);
     }
 
-    public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+    @Override
+    public void onNavigationDrawerClosed() {
+        getSupportActionBar().setTitle(mTitle);
+    }
+
+    @Override
+    public void onNavigationDrawerOpened() {
+        getSupportActionBar().setTitle("Device " + deviceID);
     }
 
 
@@ -135,22 +137,15 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
                 CallListAdapter callListAdapter = new CallListAdapter(getActivity(), list);
                 listView.setAdapter(callListAdapter);
             }else if(section == 2){
-                new API(this).fetchReceivedSMS(deviceID);
+                //new API(this).fetchReceivedSMS(deviceID);
                 CallListAdapter callListAdapter = new CallListAdapter(getActivity(), list);
                 listView.setAdapter(callListAdapter);
             }else if(section == 3){
-                new API(this).fetchSentSMS(deviceID);
+                //new API(this).fetchSentSMS(deviceID);
                 CallListAdapter callListAdapter = new CallListAdapter(getActivity(), list);
                 listView.setAdapter(callListAdapter);
             }
             return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((DeviceData) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
         }
 
         @Override
