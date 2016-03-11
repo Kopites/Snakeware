@@ -1,28 +1,19 @@
 package com.example.s1300465.snake;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.jar.Manifest;
 
 public class MainActivity extends AppCompatActivity {
     DatabaseHelper dbh;
-    BroadcastReceiver networkReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

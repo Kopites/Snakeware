@@ -2,6 +2,7 @@ package com.example.murray.snakeadmin;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,7 +12,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -57,6 +60,7 @@ class APIJSONFetcher extends AsyncTask<String, String, JSONObject> {
             url = new URL(uri.toASCIIString());
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setConnectTimeout(5000);
 
             urlConnection.connect();
 
@@ -78,9 +82,12 @@ class APIJSONFetcher extends AsyncTask<String, String, JSONObject> {
             in.close();
         }catch(FileNotFoundException ex){
             Log.w("API", "File not found! " + urlString);
-        }catch(UnknownHostException ex){
+        }catch(UnknownHostException ex) {
             Log.w("API", "Couldn't find server - no internet connection?");
             this.cancel(true);
+        }catch(SocketTimeoutException ex){
+            Log.w("API", "Connection timed out (no Mayar connection)");
+            status = HttpURLConnection.HTTP_CLIENT_TIMEOUT;
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -89,8 +96,14 @@ class APIJSONFetcher extends AsyncTask<String, String, JSONObject> {
     }
 
     protected void onPostExecute(JSONObject result){
+        Log.d("Status", status + "");
         if(status >= HttpURLConnection.HTTP_BAD_REQUEST){
             try {
+                if(status == HttpURLConnection.HTTP_CLIENT_TIMEOUT){
+                    this.obj.resultsReturned(null);
+                    return;
+                }
+
                 Log.w("Bad Request", status + " " + result.getString("message"));
             }catch(NullPointerException | JSONException ex){
                 ex.printStackTrace();

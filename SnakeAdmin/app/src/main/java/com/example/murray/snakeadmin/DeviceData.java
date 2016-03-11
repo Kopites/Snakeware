@@ -20,6 +20,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -174,6 +175,8 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
                 }catch(JSONException ex) {
                     Log.w("JSON", "Something went wrong with server data");
                 }
+            }else{
+                Toast.makeText(getContext(), "Could not connect to Mayar!", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements APIResponse{
             }catch(JSONException ex) {
                 Log.w("JSON", "Something went wrong with server data");
             }
+        }else{
+            Toast.makeText(getApplicationContext(), "Could not connect to Mayar!", Toast.LENGTH_SHORT).show();
+            (findViewById(R.id.prgLoadingPhones)).setVisibility(View.INVISIBLE);
         }
     }
 
