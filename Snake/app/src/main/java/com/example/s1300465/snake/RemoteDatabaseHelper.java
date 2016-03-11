@@ -28,6 +28,31 @@ public class RemoteDatabaseHelper {
         this.context = context;
     }
 
+    public void checkConnectionAndUpload(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("http://mayar.abertay.ac.uk/~1300465/snake/call.php");
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setConnectTimeout(5000);
+                    connection.connect();
+
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        uploadData();
+                        Log.d("Conn", "Connected to remote DB");
+                    }else{
+                        Log.d("Conn", "Connection to remote DB failed");
+                    }
+
+                    connection.disconnect();
+                }catch(IOException ex){
+                    Log.w("Connection", "Remote DB connection timed out");
+                }
+            }
+        }).start();
+    }
+
     public void uploadData(){
         ArrayList<JSONObject> texts = new DatabaseHelper(context).getSMS();
         Iterator<JSONObject> textIterator = texts.iterator();
@@ -41,6 +66,8 @@ public class RemoteDatabaseHelper {
             new PostRequester(context).execute(callsIterator.next());
         }
     }
+
+
 }
 
 class PostRequester extends AsyncTask<JSONObject, String, String> {

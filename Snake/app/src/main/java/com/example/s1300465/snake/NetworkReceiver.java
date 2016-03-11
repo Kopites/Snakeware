@@ -20,30 +20,7 @@ public class NetworkReceiver extends BroadcastReceiver {
         Log.d("NetworkReceiver", info.toString() + " " + state.toString());
 
         if (state == NetworkInfo.State.CONNECTED) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        URL url = new URL("http://mayar.abertay.ac.uk/~1300465/snake/call.php");
-                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                        connection.setConnectTimeout(5000);
-                        connection.connect();
-
-                        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                            new RemoteDatabaseHelper(context).uploadData();
-                            Log.d("Conn", "Connected to remote DB");
-                        }else{
-                            Log.d("Conn", "Connection to remote DB failed");
-                        }
-
-                        connection.disconnect();
-                    }catch(IOException ex){
-                        Log.w("Connection", "Remote DB connection timed out");
-                    }
-                }
-            });
-
-            thread.start();
+            new RemoteDatabaseHelper(context).checkConnectionAndUpload();
         }
     }
 }

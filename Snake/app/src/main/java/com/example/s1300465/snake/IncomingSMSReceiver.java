@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
+import android.util.Log;
 
 public class IncomingSMSReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("text", "incoming sms detected");
         Bundle bundle = intent.getExtras();
         if (bundle != null){
             SmsMessage[] msgs = Telephony.Sms.Intents.getMessagesFromIntent(intent);

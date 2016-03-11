@@ -54,6 +54,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try{
             db.execSQL("CREATE TABLE SMS (DeviceID INTEGER, Participant TEXT, Outgoing INTEGER, Time INTEGER, Message TEXT, Lat INTEGER, Long INTEGER);");
         }catch(SQLiteException ex){}
+
+        db.close();
     }
 
     @Override
@@ -81,6 +83,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             scores.add(new Score(result.getString(0), result.getInt(1)));
             Log.d("Score " + i, result.getString(0) + ": " + result.getString(1));
         }
+
+        db.close();
 
         return scores;
     }
@@ -185,12 +189,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             calls.add(output);
         }
 
+        db.close();
+
         return calls;
     }
 
     public void removeCall(long rowID){
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM PhoneCalls WHERE rowid = " + rowID);
+        db.close();
     }
 
     public void saveSMS(String participant, boolean outgoing, String message, long time){
@@ -250,12 +257,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             texts.add(output);
         }
 
+        db.close();
         return texts;
     }
 
     public void removeSMS(long rowID){
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM SMS WHERE rowid = " + rowID);
+        db.close();
     }
 
 
