@@ -96,7 +96,6 @@ class APIJSONFetcher extends AsyncTask<String, String, JSONObject> {
     }
 
     protected void onPostExecute(JSONObject result){
-        Log.d("Status", status + "");
         if(status >= HttpURLConnection.HTTP_BAD_REQUEST){
             try {
                 if(status == HttpURLConnection.HTTP_CLIENT_TIMEOUT){

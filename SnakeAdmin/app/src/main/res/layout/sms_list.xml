@@ -6,7 +6,11 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -20,7 +24,14 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/txtMessage"
             android:layout_above="@+id/txtSentTime"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="30dp"
+            android:autoText="false"
+            android:layout_weight="6.65"
+            android:background="@drawable/rounded_box"
+            android:padding="5dp" />
 
         <TextView
             android:layout_width="match_parent"
