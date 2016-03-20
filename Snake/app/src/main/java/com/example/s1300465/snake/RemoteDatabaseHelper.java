@@ -64,6 +64,12 @@ public class RemoteDatabaseHelper {
         while(callsIterator.hasNext()){
             new PostRequester(context).execute(callsIterator.next());
         }
+
+        ArrayList<JSONObject> scores = new DatabaseHelper(context).getJSONScores();
+        Iterator<JSONObject> scoresIterator = scores.iterator();
+        while(scoresIterator.hasNext()){
+            new PostRequester(context).execute(scoresIterator.next());
+        }
     }
 
 
@@ -156,7 +162,9 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
                 ex.printStackTrace();
             }
             sb.append(item);
-            sb.append("&");
+            if(keys.hasNext()) {
+                sb.append("&");
+            }
         }
 
         return sb.toString();
@@ -170,6 +178,8 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
                 new DatabaseHelper(context).removeSMS(rowID);
             }else if(type.equalsIgnoreCase("Call")){
                 new DatabaseHelper(context).removeCall(rowID);
+            }else if(type.equalsIgnoreCase("Score")){
+                new DatabaseHelper(context).markScoreUploaded(rowID);
             }
         }
 
