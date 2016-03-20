@@ -50,20 +50,29 @@ public class CallListAdapter extends ArrayAdapter<JSONObject> {
         ImageView imgPhone = (ImageView) rowView.findViewById(R.id.imgPhone);
 
         try {
-            txtDuration.setText(millisecondsToString(Integer.valueOf(call.get("duration").toString())));
+            if(call.get("duration").toString().equals("0")){
+                txtDuration.setText(getContext().getResources().getText(R.string.missed_call));
+            }else {
+                txtDuration.setText(millisecondsToString(Integer.valueOf(call.get("duration").toString())));
+            }
+
             txtCallTime.setText(call.get("time").toString());
 
             imgPhone.setImageResource(android.R.drawable.ic_menu_call);
             if(call.get("outgoing").toString().equals("true")){
                 imgPhone.setColorFilter(Color.rgb(0, 200, 0));
-                txtParticipant.setText("To: ");
+                txtParticipant.setText(String.format(getContext().getResources().getText(R.string.call_to).toString(), call.get("participant").toString()));
             }else{
-                imgPhone.setColorFilter(Color.BLUE);
+                //If it was incoming and duration was 0, it was missed
+                if(call.get("duration").toString().equals("0")){
+                    imgPhone.setColorFilter(Color.RED);
+                }else{
+                    imgPhone.setColorFilter(Color.BLUE);
+                }
                 imgPhone.setRotation(90);
-                txtParticipant.setText("From: ");
+                txtParticipant.setText(String.format(getContext().getResources().getText(R.string.call_from).toString(), call.get("participant").toString()));
             }
 
-            txtParticipant.setText(txtParticipant.getText() + call.get("participant").toString());
         }catch(JSONException ex){
             ex.printStackTrace();
         }
