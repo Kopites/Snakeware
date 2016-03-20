@@ -9,14 +9,18 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -188,4 +192,94 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
         }
 
     }
+}
+
+class ScoreFetcher {
+    APIResponse obj;
+    final String URL = "http://mayar.abertay.ac.uk/~1300465/snake";
+
+    public ScoreFetcher(APIResponse obj){
+        this.obj = obj;
+    }
+
+    public void fetchScores(){
+        new JSONFetcher(obj).execute(URL + "/get_scores.php");
+    }
+}
+
+class JSONFetcher extends AsyncTask<String, String, JSONObject> {
+    APIResponse obj;
+    int status;
+
+    public JSONFetcher(APIResponse obj){
+        this.obj = obj;
+    }
+
+    protected JSONObject doInBackground(String[] params){
+        JSONObject result = null;
+        InputStream in;
+        String urlString = params[0];
+
+        try {
+            URL url = new URL(urlString);
+            URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+            url = new URL(uri.toASCIIString());
+
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setConnectTimeout(5000);
+
+            urlConnection.connect();
+
+            status = urlConnection.getResponseCode();
+            if(status >= HttpURLConnection.HTTP_BAD_REQUEST){
+                in = new BufferedInputStream(urlConnection.getErrorStream());
+            }else{
+                in = new BufferedInputStream(urlConnection.getInputStream());
+            }
+
+            BufferedReader streamReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            StringBuilder responseStrBuilder = new StringBuilder();
+
+            String inputStr;
+            while ((inputStr = streamReader.readLine()) != null) {
+                responseStrBuilder.append(inputStr);
+            }
+            result = new JSONObject(responseStrBuilder.toString());
+            in.close();
+        }catch(FileNotFoundException ex){
+            Log.w("API", "File not found! " + urlString);
+        }catch(UnknownHostException ex) {
+            Log.w("API", "Couldn't find server - no internet connection?");
+            this.cancel(true);
+        }catch(SocketTimeoutException ex){
+            Log.w("API", "Connection timed out (no Mayar connection)");
+            status = HttpURLConnection.HTTP_CLIENT_TIMEOUT;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    protected void onPostExecute(JSONObject result){
+        if(status >= HttpURLConnection.HTTP_BAD_REQUEST){
+            try {
+                if(status == HttpURLConnection.HTTP_CLIENT_TIMEOUT){
+                    this.obj.resultsReturned(null);
+                    return;
+                }
+
+                Log.w("Bad Request", status + " " + result.getString("message"));
+            }catch(NullPointerException | JSONException ex){
+                ex.printStackTrace();
+            }
+        }
+
+        this.obj.resultsReturned(result);
+    }
+}
+
+
+interface APIResponse {
+    void resultsReturned(JSONObject results);
 }

@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -62,6 +64,7 @@ public class HighScoresActivity extends AppCompatActivity {
 
         return output;
     }
+
 }
 
 class ScoresListViewAdapter extends BaseAdapter{
