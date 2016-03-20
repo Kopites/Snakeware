@@ -2,8 +2,9 @@
 	ini_set("display_errors", 1);
 	ini_set('display_startup_errors', 1);
 	error_reporting(E_ALL);
+	include 'db.php';
 
-	if($_SERVER['REQUEST_METHOD'] == 'POST' || true){
+	if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		$deviceID = mysql_escape_string(htmlspecialchars($_POST['deviceID']));
 		$participant = mysql_escape_string(htmlspecialchars($_POST['participant']));
 		$outgoing = mysql_escape_string(htmlspecialchars($_POST['outgoing']));
@@ -22,15 +23,4 @@
 		doDBQuery($sql);
 		echo("Success");
 	}	
-	
-	function doDBQuery($query){
-		$username="sql1300465";
-		$password="bqJkFIiu";
-		$database="lochnagar.abertay.ac.uk";
-
-		mysql_connect($database,$username,$password);
-		@mysql_select_db($username) or die( "Unable to select database");
-		mysql_query($query);
-		mysql_close();
-	}
 ?>
