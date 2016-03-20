@@ -17,7 +17,7 @@ public class IncomingCallInterceptor extends BroadcastReceiver {
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 
         Log.d("State Change", state);
-        if(state.equals(TelephonyManager.EXTRA_STATE_RINGING)){
+        if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
             String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
             long startTime = System.currentTimeMillis();
             Log.d("Call", "Call started (ringing)");
@@ -27,14 +27,20 @@ public class IncomingCallInterceptor extends BroadcastReceiver {
             prefsEditor.putLong("callStartTime", startTime);
             prefsEditor.putString("incomingNumber", incomingNumber);
             prefsEditor.apply();
+        }else if(state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)){
+            SharedPreferences.Editor prefsEditor = context.getSharedPreferences("com.example.s1300465.snake", Context.MODE_PRIVATE).edit();
+            prefsEditor.putBoolean("answered", true);
+            prefsEditor.apply();
         }else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
             long startTime;
             String incomingNumber;
+            boolean answered;
 
             SharedPreferences prefs = context.getSharedPreferences("com.example.s1300465.snake", Context.MODE_PRIVATE);
             startTime = prefs.getLong("callStartTime", 0);
             incomingNumber = prefs.getString("incomingNumber", null);
-            
+            answered = prefs.getBoolean("answered", false);
+
             Log.d("Call", "Call ended (possibly)");
             Log.d("Start Time", startTime + "");
             Log.d("Incoming Number", incomingNumber + "");
@@ -47,12 +53,17 @@ public class IncomingCallInterceptor extends BroadcastReceiver {
 
             long endTime = System.currentTimeMillis();
             long callDuration = endTime - startTime;
+            if(!answered){
+                //If the call was never answered, set the duration to 0
+                callDuration = 0;
+                //An incoming call with duration 0 will be treated as missed
+            }
             Log.d("End Time", endTime + "");
             Log.d("Duration", callDuration + "");
 
             dbh.savePhoneCall(incomingNumber, false, callDuration, startTime);
 
-            prefs.edit().remove("callStartTime").remove("incomingNumber").apply();
+            prefs.edit().remove("callStartTime").remove("incomingNumber").remove("answered").apply();
         }
     }
 }
