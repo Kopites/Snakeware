@@ -73,7 +73,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public ArrayList<Score> getLocalScores(){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor result = db.query("LocalScores", new String[]{"Name", "Score"}, null, null, null, null, "Score");
+        Cursor result = db.query("LocalScores", new String[]{"Name", "Score"}, null, null, null, null, "Score DESC");
 
         ArrayList<Score> scores = new ArrayList<>();
         for(int i = 0; i < result.getCount(); i++){
@@ -89,7 +89,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public ArrayList<JSONObject> getJSONScores() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor result = db.query("LocalScores", new String[]{"rowid", "Name", "Score", "Uploaded"}, null, null, null, null, "Score");
+        Cursor result = db.query("LocalScores", new String[]{"rowid", "Name", "Score", "Uploaded"}, null, null, null, null, "Score DESC");
 
         ArrayList<JSONObject> scores = new ArrayList<>();
         for (int i = 0; i < result.getCount(); i++) {
