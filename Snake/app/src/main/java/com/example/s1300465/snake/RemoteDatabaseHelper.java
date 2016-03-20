@@ -1,6 +1,5 @@
 package com.example.s1300465.snake;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;

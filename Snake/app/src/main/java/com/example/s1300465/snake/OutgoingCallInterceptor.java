@@ -3,12 +3,8 @@ package com.example.s1300465.snake;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.provider.CallLog;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
-import android.widget.Toast;
 
 public class OutgoingCallInterceptor extends BroadcastReceiver {
     String outgoingNumber;

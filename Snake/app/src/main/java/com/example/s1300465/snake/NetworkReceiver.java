@@ -7,10 +7,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 public class NetworkReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {

@@ -95,11 +95,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         final LocationListener locationListener = new LocationListener() {
             //getLastKnownLocation() automatically updates when the LocationListener fires
-            //So we don't need to to anything in here
+            //So we don't need to do anything in here
             @Override
             public void onLocationChanged(Location location) {
             }
-
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
             }
@@ -113,7 +112,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         };
 
         try {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, locationListener);
             lastKnown = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }catch(SecurityException ex){
             Log.w("SecurityException", "No permission to access location");

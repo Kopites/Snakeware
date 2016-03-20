@@ -1,6 +1,5 @@
 package com.example.s1300465.snake;
 
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
