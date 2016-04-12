@@ -2,4 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.murray.snakeadmin.DeviceData">
+    <item android:id="@+id/choose_another_device" android:title="@string/choose_another_device"
+        android:orderInCategory="100" app:showAsAction="never" />
 </menu>

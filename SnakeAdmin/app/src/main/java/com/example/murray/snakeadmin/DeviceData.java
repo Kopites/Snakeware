@@ -87,12 +87,15 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.device_data, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        if(item.getItemId() == R.id.choose_another_device){
+            this.finish();
+        }
         return super.onOptionsItemSelected(item);
     }
 

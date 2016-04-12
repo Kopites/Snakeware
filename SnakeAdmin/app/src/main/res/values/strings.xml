@@ -3,7 +3,8 @@
 
     <string name="action_settings">Settings</string>
     <string name="choose_device">Choose a Device:</string>
-    <string name="title_activity_device_data">DeviceData</string>
+    <string name="choose_another_device">Choose another Device</string>
+    <string name="title_activity_device_data">Device Data</string>
 
     <string name="title_phonecalls">Call Logs</string>
     <string name="title_sent_sms">Sent SMS</string>
