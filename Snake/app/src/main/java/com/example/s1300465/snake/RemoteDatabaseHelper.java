@@ -1,7 +1,10 @@
 package com.example.s1300465.snake;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.BatteryManager;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -36,12 +39,28 @@ public class RemoteDatabaseHelper {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                //First check the battery level
+                //If it's too low, don't try to upload (just in case)
+                IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+                Intent batteryStatus = context.registerReceiver(null, ifilter);
+                int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+                float batteryPct = (level / (float)scale)*100;
+                Log.d("Battery", batteryPct + "%");
+
+                if(batteryPct < 10){
+                    return;
+                }
+
+                //If the battery is good, now try connecting to Mayar
                 try {
                     URL url = new URL("http://mayar.abertay.ac.uk/~1300465/snake/call.php");
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setConnectTimeout(5000);
                     connection.connect();
 
+                    //If we're connected, send the data to the remote database
                     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         uploadData();
                         Log.d("Conn", "Connected to remote DB");
