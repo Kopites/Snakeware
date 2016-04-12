@@ -32,6 +32,7 @@ public class RemoteDatabaseHelper {
     }
 
     public void checkConnectionAndUpload(){
+        Log.d("RDH", "Attempting to upload...");
         new Thread(new Runnable() {
             @Override
             public void run() {
