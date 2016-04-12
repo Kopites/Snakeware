@@ -14,6 +14,7 @@ public class IncomingSMSReceiver extends BroadcastReceiver {
         Log.d("text", "incoming sms detected");
         Bundle bundle = intent.getExtras();
         if (bundle != null){
+            //Extract what we need from the SMS, and save
             SmsMessage[] msgs = Telephony.Sms.Intents.getMessagesFromIntent(intent);
             SmsMessage sms = msgs[0];
             String message = sms.getMessageBody();

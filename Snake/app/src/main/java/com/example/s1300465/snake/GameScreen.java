@@ -91,6 +91,7 @@ public class GameScreen extends Activity {
         try {
             gameArea.redraw();
 
+            //Randomly spawn fruits
             if(new Random().nextInt(10) == 0 && gameArea.numFruit() == 0){
                 gameArea.spawnFruit();
             }
@@ -114,6 +115,7 @@ public class GameScreen extends Activity {
         Log.w("Died", "You died!");
         gameRunning = false;
 
+        //Open up the save score dialog on death
         final DatabaseHelper dbHelper = new DatabaseHelper(this);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);

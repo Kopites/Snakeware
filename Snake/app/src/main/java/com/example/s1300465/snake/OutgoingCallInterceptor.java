@@ -21,10 +21,12 @@ public class OutgoingCallInterceptor extends BroadcastReceiver {
         tm.listen(new PhoneStateListener() {
             @Override
             public void onCallStateChanged(int state, String number) {
+                //If it's gone to OFFHOOK, the call is in progress
                 if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
                     startTime = System.currentTimeMillis();
                     outgoingNumber = number;
                 }
+                //If it's gone IDLE, the call has ended
                 if (state == TelephonyManager.CALL_STATE_IDLE) {
                     if (outgoingNumber == null || outgoingNumber.equals("") || startTime == 0) {
                         return;

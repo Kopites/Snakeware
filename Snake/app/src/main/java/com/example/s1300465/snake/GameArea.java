@@ -35,6 +35,7 @@ public class GameArea extends View {
     protected void onDraw(Canvas canvas){
         super.onDraw(canvas);
 
+        //onDraw, loop through the tile grid and paint the correct colour in the correct location
         for(int x = 0; x < gridWidth; x++){
             for(int y = 0; y < gridHeight; y++){
                 paint.setColor(Color.TRANSPARENT);
@@ -92,6 +93,7 @@ public class GameArea extends View {
     }
 
     protected void moveSnake(){
+        //When the clock clocks, calculate how we're moving the snake
         Direction dirOfLastPiece = null;
         GridPiece[][] tempGrid = new GridPiece[gridWidth][gridHeight];
         tempGrid = copyFruitsToNewGrid(tempGrid);
@@ -104,6 +106,7 @@ public class GameArea extends View {
             if(piece.getType() == GridTile.SnakeHead){
                 dirOfLastPiece = piece.getDirection();
                 GridPiece nextPiece = getPieceAhead(x, y);
+                //Check if we're hitting an object (fruit, ourselves or a wall)
                 if(nextPiece != null) {
                     if(nextPiece.getType() == GridTile.Pickup){
                         ateFruit = true;
@@ -138,6 +141,7 @@ public class GameArea extends View {
 
     protected void increaseSnakeLength(int amount){
         length = length + amount;
+        //Add a new piece to the snake
 
         for(int i = 0; i < amount; i++){
             SnakePiece tail = snakePieces.get(snakePieces.size() - 1);
@@ -167,6 +171,9 @@ public class GameArea extends View {
     }
 
     protected GridPiece[][] copyFruitsToNewGrid(GridPiece[][] mGrid){
+        //When we're moving the snake, we first clear up the fruits to a temporary 2nd grid
+        //Then move the snake wherever he needs to be
+        //Then copy the fruit back
         for(int x = 0; x < gridWidth; x++){
             for(int y = 0; y < gridHeight; y++){
                 if(grid[x][y] == null){

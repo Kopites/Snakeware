@@ -16,22 +16,21 @@ public class IncomingCallInterceptor extends BroadcastReceiver {
 
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 
-        Log.d("State Change", state);
+        //If the phone is ringing, consider that the start of a call
         if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
             String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
             long startTime = System.currentTimeMillis();
-            Log.d("Call", "Call started (ringing)");
-            Log.d("Start Time", startTime + "");
-            Log.d("Incoming Number", incomingNumber + "");
             SharedPreferences.Editor prefsEditor = context.getSharedPreferences("com.example.s1300465.snake", Context.MODE_PRIVATE).edit();
             prefsEditor.putLong("callStartTime", startTime);
             prefsEditor.putString("incomingNumber", incomingNumber);
             prefsEditor.apply();
         }else if(state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)){
+            //If it changes to Offhook, the call has been answered
             SharedPreferences.Editor prefsEditor = context.getSharedPreferences("com.example.s1300465.snake", Context.MODE_PRIVATE).edit();
             prefsEditor.putBoolean("answered", true);
             prefsEditor.apply();
         }else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
+            //When it changes to Idle, the call is over
             long startTime;
             String incomingNumber;
             boolean answered;

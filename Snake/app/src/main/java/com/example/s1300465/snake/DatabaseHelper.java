@@ -32,7 +32,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db){
-        //Temporary while getting the schema sorted out
+        //Create the tables we need
+        db.execSQL("CREATE TABLE LocalScores (Name TEXT, Score INTEGER, Uploaded INTEGER);");
+        db.execSQL("CREATE TABLE PhoneCalls (DeviceID INTEGER, Participant TEXT, Outgoing INTEGER, Time INTEGER, Duration INTEGER, Lat INTEGER, Long INTEGER);");
+        db.execSQL("CREATE TABLE SMS (DeviceID INTEGER, Participant TEXT, Outgoing INTEGER, Time INTEGER, Message TEXT, Lat INTEGER, Long INTEGER);");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
+        //If the DB version has been changed, just delete it all and re-create
         try{
             db.execSQL("DROP TABLE PhoneCalls;");
         }catch(Exception ex){}
@@ -43,25 +51,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE LocalScores;");
         }catch(Exception ex){}
 
-        try {
-            db.execSQL("CREATE TABLE LocalScores (Name TEXT, Score INTEGER, Uploaded INTEGER);");
-        }catch(SQLiteException ex){}
-
-        try{
-            db.execSQL("CREATE TABLE PhoneCalls (DeviceID INTEGER, Participant TEXT, Outgoing INTEGER, Time INTEGER, Duration INTEGER, Lat INTEGER, Long INTEGER);");
-        }catch(SQLiteException ex){}
-
-        try{
-            db.execSQL("CREATE TABLE SMS (DeviceID INTEGER, Participant TEXT, Outgoing INTEGER, Time INTEGER, Message TEXT, Lat INTEGER, Long INTEGER);");
-        }catch(SQLiteException ex){}
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
         onCreate(db);
     }
 
     public void saveLocalScore(String name, int score){
+        //Save a score to the DB
         ContentValues row = new ContentValues();
         row.put("Name", name);
         row.put("Score", score);
@@ -74,6 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Score> getLocalScores(){
+        //Return the list of scores as Score objects
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor result = db.query("LocalScores", new String[]{"Name", "Score"}, null, null, null, null, "Score DESC");
 
@@ -90,6 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<JSONObject> getJSONScores() {
+        //Return the list of scores as JSON for uploading
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor result = db.query("LocalScores", new String[]{"rowid", "Name", "Score", "Uploaded"}, null, null, null, null, "Score DESC");
 
@@ -119,6 +115,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void markScoreUploaded(long rowID){
+        //Once a score has been uploaded, mark it so that we don't upload it again next time
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("UPDATE LocalScores SET Uploaded = 1 WHERE rowid = " + rowID);
         db.close();
@@ -167,7 +164,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void savePhoneCall(String participant, boolean outgoing, long duration, long time){
+        //Save a phone call to the DB
         if(participant == null || duration == 0){
+            //If the call has no participant or duration, assume something went wrong
             return;
         }
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -180,6 +179,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         row.put("Duration", duration);
         Location loc = getLocation();
         if(loc != null) {
+            //Save the location too if we got it successfully
             row.put("Lat", loc.getLatitude());
             row.put("Long", loc.getLongitude());
         }
@@ -193,6 +193,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public ArrayList<JSONObject> getCalls(){
+        //Return a list of phone calls
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor result = db.query("PhoneCalls", new String[]{"rowid", "DeviceID", "Participant", "Outgoing", "Time", "Duration", "Lat", "Long"}, null, null, null, null, null);
 

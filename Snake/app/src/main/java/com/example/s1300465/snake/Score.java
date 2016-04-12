@@ -1,6 +1,7 @@
 package com.example.s1300465.snake;
 
 public class Score {
+    //Score object
     private String name;
     private int score;
 
