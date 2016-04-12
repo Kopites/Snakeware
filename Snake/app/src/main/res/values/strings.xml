@@ -11,6 +11,8 @@
     <string name="high_scores">High Scores</string>
     <string name="title_activity_high_scores">High Scores</string>
 
+    <string name="permissions_required">Snake needs permissions in order to run!</string>
+
     <string name="local_highscores">Local</string>
     <string name="global_highscores">Global</string>
 

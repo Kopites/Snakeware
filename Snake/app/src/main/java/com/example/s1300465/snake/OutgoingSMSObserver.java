@@ -33,6 +33,7 @@ public class OutgoingSMSObserver extends ContentObserver {
 
         int type = cur.getInt(cur.getColumnIndex("type"));
         if(type == 2){ //if type is outgoing
+            //Extract what we want, and save
             String message = cur.getString(cur.getColumnIndex("body"));
             String address = cur.getString(cur.getColumnIndex("address"));
 

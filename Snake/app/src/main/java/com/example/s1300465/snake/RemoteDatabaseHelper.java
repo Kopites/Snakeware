@@ -77,6 +77,7 @@ public class RemoteDatabaseHelper {
     }
 
     public void uploadData(){
+        //Go through each SMS and upload tt
         ArrayList<JSONObject> texts = new DatabaseHelper(context).getSMS();
         Iterator<JSONObject> textIterator = texts.iterator();
         while(textIterator.hasNext()){
@@ -172,6 +173,7 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
     }
 
     public String jsonToQuery(JSONObject json) throws JSONException {
+        //Convert a JSON object of parameters to a URL parameter string
         StringBuilder sb = new StringBuilder();
         Iterator<String> keys = json.keys();
 
