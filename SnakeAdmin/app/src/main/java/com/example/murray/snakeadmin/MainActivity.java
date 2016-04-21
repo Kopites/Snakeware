@@ -1,7 +1,9 @@
 package com.example.murray.snakeadmin;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,13 +26,14 @@ public class MainActivity extends AppCompatActivity implements APIResponse{
     ArrayList<String> phones = new ArrayList<>();
     ListView listView;
     PhoneListAdapter phoneListAdapter;
+    SwipeRefreshLayout refresher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new API(this).fetchPhones();
+        loadDevices();
 
         listView = (ListView) findViewById(R.id.phonesList);
         phoneListAdapter = new PhoneListAdapter(this, phones);
@@ -44,6 +47,25 @@ public class MainActivity extends AppCompatActivity implements APIResponse{
                 startActivity(intent);
             }
         });
+
+        refresher = (SwipeRefreshLayout) findViewById(R.id.refreshDeviceList);
+
+        refresher.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadDevices();
+                refresher.setRefreshing(false);
+            }
+        });
+    }
+
+    public void loadDevices(){
+        phones.clear();
+        if(phoneListAdapter != null) {
+            phoneListAdapter.notifyDataSetChanged();
+        }
+        (findViewById(R.id.prgLoadingPhones)).setVisibility(View.VISIBLE);
+        new API(this).fetchPhones();
     }
 
     @Override

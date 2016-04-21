@@ -2,6 +2,7 @@ package com.example.murray.snakeadmin;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -34,6 +35,7 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
     private String deviceID;
+    private SwipeRefreshLayout refresher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,19 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        refresher = (SwipeRefreshLayout) findViewById(R.id.refreshEventList);
+        refresher.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //On refresh,
+                // Get the fragment being shown, then re-load it
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                PlaceholderFragment fragment = (PlaceholderFragment) fragmentManager.findFragmentById(R.id.container);
+                fragment.loadEvents();
+                refresher.setRefreshing(false);
+            }
+        });
     }
 
     @Override
@@ -135,6 +150,14 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
             View rootView = inflater.inflate(R.layout.fragment_device_data, container, false);
             listView = (ListView) rootView.findViewById(R.id.lstDataView);
 
+            loadEvents();
+
+            listView.setEmptyView(rootView.findViewById(R.id.txtEmptyList));
+
+            return rootView;
+        }
+
+        public void loadEvents(){
             int section = getArguments().getInt(ARG_SECTION_NUMBER);
             if(section == 1) {
                 new API(this).fetchPhoneCalls(deviceID);
@@ -149,10 +172,6 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
                 SMSAdapter smsAdapter = new SMSAdapter(getActivity(), list, true);
                 listView.setAdapter(smsAdapter);
             }
-
-            listView.setEmptyView(rootView.findViewById(R.id.txtEmptyList));
-
-            return rootView;
         }
 
         @Override

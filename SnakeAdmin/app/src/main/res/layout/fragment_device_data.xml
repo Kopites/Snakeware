@@ -9,10 +9,11 @@
         android:id="@+id/lstDataView" />
 
     <TextView android:id="@+id/txtEmptyList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/no_events"
-        android:textAppearance="@android:style/TextAppearance.Large"
-        android:layout_marginTop="40dp"
-        android:gravity="center_horizontal" />
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:text="@string/no_events"
+       android:textAppearance="@android:style/TextAppearance.Large"
+       android:layout_marginTop="40dp"
+       android:gravity="center_horizontal" />
+
 </LinearLayout>
