@@ -30,14 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
         getPermissions();
 
-        //For Debugging purposes:
-        (findViewById(R.id.textView)).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent dbmanager = new Intent(getApplicationContext(), AndroidDatabaseManager.class);
-                startActivity(dbmanager);
-            }
-        });
-
         //Have to register a ContentObserver to list for all SMS in order to obtain outgoing ones
         //as there's no Broadcast Receiver action for outgoing (or at least it doesn't work)
         ContentResolver contentResolver = getApplicationContext().getContentResolver();
