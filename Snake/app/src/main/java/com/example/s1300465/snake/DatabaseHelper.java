@@ -3,10 +3,7 @@ package com.example.s1300465.snake;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import android.location.LocationListener;
@@ -76,7 +73,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         for(int i = 0; i < result.getCount(); i++){
             result.moveToPosition(i);
             scores.add(new Score(result.getString(0), result.getInt(1)));
-            Log.d("Score " + i, result.getString(0) + ": " + result.getString(1));
         }
 
         db.close();

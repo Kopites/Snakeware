@@ -6,7 +6,6 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
-import android.util.Log;
 
 public class OutgoingSMSObserver extends ContentObserver {
     Context context;
@@ -16,7 +15,6 @@ public class OutgoingSMSObserver extends ContentObserver {
         super(handler);
         this.context = context;
         this.contentResolver = contentResolver;
-        Log.d("text", "outgoing sms observer registered");
     }
 
     @Override

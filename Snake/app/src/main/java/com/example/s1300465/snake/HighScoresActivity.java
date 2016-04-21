@@ -14,8 +14,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import org.json.JSONObject;
-
 import java.util.Iterator;
 import java.util.List;
 

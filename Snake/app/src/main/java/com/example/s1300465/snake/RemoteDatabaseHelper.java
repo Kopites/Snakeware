@@ -35,7 +35,6 @@ public class RemoteDatabaseHelper {
     }
 
     public void checkConnectionAndUpload(){
-        Log.d("RDH", "Attempting to upload...");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -47,8 +46,6 @@ public class RemoteDatabaseHelper {
                 int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
                 float batteryPct = (level / (float)scale)*100;
-                Log.d("Battery", batteryPct + "%");
-
                 if(batteryPct < 10){
                     return;
                 }
@@ -140,9 +137,7 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
 
             OutputStreamWriter writer = new OutputStreamWriter(urlConnection.getOutputStream());
 
-            Log.d("Query", query);
             writer.write(query);
-
             writer.flush();
             writer.close();
 
@@ -197,7 +192,6 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
     }
 
     protected void onPostExecute(String result){
-        Log.d("Result", result);
         if(result.equalsIgnoreCase("Success")){
             //If the query was successful, we can remove the row from the local database
             if(type.equalsIgnoreCase("SMS")){
@@ -210,7 +204,7 @@ class PostRequester extends AsyncTask<JSONObject, String, String> {
         }
 
         if(status >= HttpURLConnection.HTTP_BAD_REQUEST){
-            Log.d("Bad Request", status + "");
+            Log.w("Bad Request", status + "");
         }
 
     }

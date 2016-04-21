@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -313,8 +312,6 @@ public class GameArea extends View {
 
     @Override
     protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight){
-        Log.d("Size", "Size just changed to w" + width + ", h" + height);
-
         calculateGridSize(width, height);
     }
 

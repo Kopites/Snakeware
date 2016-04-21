@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 public class IncomingCallInterceptor extends BroadcastReceiver {
 
@@ -40,13 +39,9 @@ public class IncomingCallInterceptor extends BroadcastReceiver {
             incomingNumber = prefs.getString("incomingNumber", null);
             answered = prefs.getBoolean("answered", false);
 
-            Log.d("Call", "Call ended (possibly)");
-            Log.d("Start Time", startTime + "");
-            Log.d("Incoming Number", incomingNumber + "");
             if(incomingNumber == null || startTime == 0){
                 //If the phone changed to idle but there's no startTime stored, then it wasn't previously ringing
                 //(probably an outgoing call)
-                Log.d("Call", "Not logged, incomingNumber null or startTime 0");
                 return;
             }
 
@@ -57,8 +52,6 @@ public class IncomingCallInterceptor extends BroadcastReceiver {
                 callDuration = 0;
                 //An incoming call with duration 0 will be treated as missed
             }
-            Log.d("End Time", endTime + "");
-            Log.d("Duration", callDuration + "");
 
             dbh.savePhoneCall(incomingNumber, false, callDuration, startTime);
 

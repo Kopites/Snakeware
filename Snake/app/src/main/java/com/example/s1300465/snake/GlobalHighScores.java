@@ -2,7 +2,6 @@ package com.example.s1300465.snake;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +59,5 @@ public class GlobalHighScores extends Fragment implements APIResponse{
 
         ScoresListViewAdapter adapter = new ScoresListViewAdapter(getActivity(), namesArray, scoreValuesArray);
         globalScores.setAdapter(adapter);
-
-        Log.d("Count", adapter.getCount() + "");
     }
 }
