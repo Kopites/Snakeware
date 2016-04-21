@@ -35,7 +35,6 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
     private String deviceID;
-    private SwipeRefreshLayout refresher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +50,6 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        refresher = (SwipeRefreshLayout) findViewById(R.id.refreshEventList);
-        refresher.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //On refresh,
-                // Get the fragment being shown, then re-load it
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                PlaceholderFragment fragment = (PlaceholderFragment) fragmentManager.findFragmentById(R.id.container);
-                fragment.loadEvents();
-                refresher.setRefreshing(false);
-            }
-        });
     }
 
     @Override
@@ -127,6 +114,7 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
         private static String deviceID;
         private ListView listView;
         private static ArrayList<JSONObject> list;
+        private SwipeRefreshLayout refresher;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -151,6 +139,17 @@ public class DeviceData extends AppCompatActivity implements NavigationDrawerFra
             listView = (ListView) rootView.findViewById(R.id.lstDataView);
 
             loadEvents();
+
+            refresher = (SwipeRefreshLayout) rootView.findViewById(R.id.refreshEventList);
+
+            refresher.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    //Reload the events if they refresh
+                    loadEvents();
+                    refresher.setRefreshing(false);
+                }
+            });
 
             listView.setEmptyView(rootView.findViewById(R.id.txtEmptyList));
 
