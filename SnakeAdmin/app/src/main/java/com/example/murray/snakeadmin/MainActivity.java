@@ -97,4 +97,19 @@ public class MainActivity extends AppCompatActivity implements APIResponse{
         super.onConfigurationChanged(newConfig);
 
     }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+    }
 }
