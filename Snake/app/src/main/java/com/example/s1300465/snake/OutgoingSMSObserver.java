@@ -6,6 +6,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 
 public class OutgoingSMSObserver extends ContentObserver {
     Context context;
@@ -28,6 +29,7 @@ public class OutgoingSMSObserver extends ContentObserver {
         }catch(NullPointerException ex){
             return;
         }
+
 
         int type = cur.getInt(cur.getColumnIndex("type"));
         if(type == 2){ //if type is outgoing

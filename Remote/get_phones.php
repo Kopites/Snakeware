@@ -6,7 +6,7 @@
 	header('Content-type: application/json');
 
 	function getPhones(){
-		$query = "SELECT SMS.DeviceID FROM SMS, PhoneCalls WHERE SMS.DeviceID = PhoneCalls.DeviceID GROUP BY SMS.DeviceID";
+		$query = "SELECT DeviceID FROM SMS UNION SELECT DeviceID FROM PhoneCalls";
 		$result = doDBQuery($query);
 
 		$output = array();
